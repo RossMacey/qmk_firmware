@@ -6,7 +6,7 @@ I just wanted to save off my keymaps without merging them with the official repo
 
 [This QMK page](https://docs.qmk.fm/#/newbs_getting_started) is good for getting started. I wrote a bunch of notes in my OneNote → Infrequent → Misc → GMMK 75.
 
-- Ensure QMK MSYS is up-to-date ([reference](https://docs.qmk.fm/#/newbs_getting_started?id=set-up-your-environment)). Almost every single confusing problem I had at first could have been solved by updating QMK MSYS.
+- Ensure QMK MSYS is up-to-date ([reference](https://docs.qmk.fm/#/newbs_getting_started?id=set-up-your-environment)). Almost every single confusing problem I had at first could have been solved by updating QMK MSYS. It seems to remember its installation directory, but I did end up with `E:\QMK_MSYS\QMK_MSYS` somehow despite that. 🤷‍♂️
 - MinGW64 stuff apparently shouldn't be needed with QMK MSYS, but I still copied `mingw64.exe` into the QMK MSYS folder and used that as my shell for all of the commands below. You can also just run the "QMK MSYS" shortcut, which appears to just be a shortcut to `ConEmu64.exe` + `bash.exe`: `E:\QMK_MSYS\conemu\ConEmu64.exe -NoSingle -NoUpdate -icon "E:\QMK_MSYS\icon.ico" -title "QMK MSYS" -run "E:\QMK_MSYS\usr\bin\bash.exe" -l -i -cur_console:m:""`
 - Set defaults for QMK so that you don't need to specify `-km` (keymap) or `kb` (keyboard) arguments. I only have the one QMK keyboard after all!
   - `qmk config user.keyboard=gmmk/pro/ansi` or `qmk config user.keyboard=moonlander`
@@ -48,3 +48,8 @@ I just wanted to save off my keymaps without merging them with the official repo
 
 - [How to detect layer changes](https://github.com/qmk/qmk_firmware/issues/2862#issuecomment-531015490). Note that `layer_state` is just a global with the current value ([reference](https://github.com/qmk/qmk_firmware/blob/9dea6f772077dc5c09daf40378e45884d29ab2e2/tmk_core/common/action_layer.c#L81)).
 - Configuring VSCode is probably a good idea ([reference](https://docs.qmk.fm/#/other_vscode?id=configuring-vs-code)).
+
+## Troubleshooting
+
+- General troubles: try `qmk doctor` to detect issues and `qmk clean`
+- Linker issues: this could be due to having something in `rules.mk`; I once hit this when I had `COMBO_ENABLE = yes` in there, and removing it fixed everything.
