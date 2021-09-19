@@ -22,6 +22,7 @@
 enum layers {
     _WIN_BASE,  // default layer
     _MAC_BASE,  // default layer but with Mac keys
+    _GAMING,    // gaming layer (no LH home-row mods)
     _SYMB,      // symbols
     _NAV,       // navigation keys
     _MDIA,      // media keys
@@ -76,6 +77,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LCTL,KC_LGUI,KC_LALT,KC_LEFT,TT(_SYMB),  KC_LALT,                      LGUI_T(KC_ESC),   KC_UP,   KC_DOWN, KC_LBRC, KC_RBRC, TT(_SYMB),
                                             KC_SPC,  KC_LGUI, KC_LALT,           KC_ENT,  KC_BSPC, MO(_NAV)
     ),
+    [_GAMING] = LAYOUT_moonlander(
+        KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,              KC_EQL, KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS,
+        KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_7,         TG(_GAMING), KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSLS,
+        KC_9,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_8,              KC_MEH, KC_H,   KC_J,    KC_K,    KC_L,  KC_SCLN, LT(_MDIA, KC_QUOT),
+        KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                                KC_N,   KC_M, KC_COMM,  KC_DOT,LCTL_T(KC_SLSH), KC_RSFT,
+        KC_LCTL,KC_LGUI,KC_LALT,KC_LEFT,TT(_SYMB),  KC_LALT,                      LCTL_T(KC_ESC),   KC_UP,   KC_DOWN, KC_LBRC, KC_RBRC, TT(_SYMB),
+                                            KC_SPC,  KC_LCTL, KC_LGUI,           KC_ENT,  KC_BSPC, MO(_NAV)
+    ),
 
     [_SYMB] = LAYOUT_moonlander(
         KC_ESC,    KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   _______,         _______, KC_F6,   KC_F7,    KC_F8,    KC_F9,    KC_F10,  KC_F11,
@@ -97,7 +106,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     // For some reason, if _NAV is above _MDIA, then the mouse movement from _MDIA starts affecting _NAV.
     [_MDIA] = LAYOUT_moonlander(
-        _______,_______,_______, _______, _______, _______, DF(_WIN_BASE),       DF(_MAC_BASE), _______, _______, KC_MS_BTN3, _______, _______, RESET,
+    TO(_GAMING),_______,_______, _______, _______, _______, DF(_WIN_BASE),       DF(_MAC_BASE), _______, _______, KC_MS_BTN3, _______, _______, RESET,
         _______, _______, _______, KC_MS_U, _______, _______, _______,           _______, _______, _______, KC_MS_U, _______, KC_PSCR, _______,
         _______, _______, KC_MS_L, KC_MS_D, KC_MS_R, _______, _______,           _______, _______, KC_MS_L, KC_MS_D, KC_MS_R, KC_MPLY, _______,
         _______, _______, _______, _______, _______, _______,                             _______, _______, KC_MPRV, KC_MNXT, KC_BTN2, _______,
@@ -107,9 +116,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 // clang-format on
 
+// Sets all keycodes specified in the array to the given color. This is good for
+// coloring arbitrary keys like WASD or all of the number keys at once.
 void set_all_keys_colors(const uint8_t keycodes[], uint8_t len, uint8_t r, uint8_t g, uint8_t b) {
     for (uint8_t i = 0; i < len; ++i) {
         rgb_matrix_set_color(keycodes[i], r, g, b);
+    }
+}
+
+// Sets keys that fall within a contiguous keycode range to a given color.
+// The start and end codes are inclusive.
+void set_color_for_contiguous_keycodes(uint8_t start_code, uint8_t end_code, uint8_t r, uint8_t g, uint8_t b) {
+    for (uint8_t i = start_code; i <= end_code; ++i) {
+        rgb_matrix_set_color(i, r, g, b);
     }
 }
 
@@ -143,6 +162,10 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             rgb_matrix_set_color(22, 0x64, 0x64, 0x64);  // 'F' key
             rgb_matrix_set_color(58, 0x64, 0x64, 0x64);  // 'J' key
             break;
+        case _GAMING:
+            set_color_for_contiguous_keycodes(0, 31, RGB_RED);
+            rgb_matrix_set_color(66, RGB_RED);  // Leave gaming mode
+            break;
         case _SYMB: {
             rgb_matrix_set_color(62, 0x64, 0x00, 0x00);  // 'Y' key
             if (host_keyboard_leds() & (1 << USB_LED_NUM_LOCK)) {
@@ -166,6 +189,7 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             rgb_matrix_set_color(42, RGB_GREEN);  // 'P' key
             rgb_matrix_set_color(36, RGB_RED);    // RESET key
 
+            rgb_matrix_set_color(0, RGB_RED);     // Gaming
             rgb_matrix_set_color(29, RGB_GREEN);  // Win key
             rgb_matrix_set_color(65, RGB_WHITE);  // Mac key
             break;
