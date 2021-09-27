@@ -106,3 +106,20 @@
 
 // Allot for toggling to a TT layer with just two taps.
 #define TAPPING_TOGGLE 2
+
+// Tapping a dual-function key twice will enable its hold action rather than
+// repeatedly invoking its tap action.
+#define TAPPING_FORCE_HOLD
+
+// I have enough LEDs lighting up to tell me which layer I'm in; I don't want
+// those super bright ones shining in my eyes. 😡
+#define MOONLANDER_USER_LEDS
+
+// Auto Shift options
+// Disable Auto Shift on letter keys
+#define NO_AUTO_SHIFT_ALPHA
+// This is the time needed before the shifted key will be chosen
+#define AUTO_SHIFT_TIMEOUT TAPPING_TERM
+// Bypasses having to set up via these instructions:
+// https://beta.docs.qmk.fm/using-qmk/software-features/feature_auto_shift#setup
+#define AUTO_SHIFT_NO_SETUP

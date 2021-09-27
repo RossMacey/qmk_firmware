@@ -42,6 +42,9 @@ enum custom_keycodes {
     KC_RIGHT_ENCLOSE,
 };
 
+// This is just to save space over typing "_______" in layouts.
+#define XXX KC_NO
+
 // Left-hand home row mods on Windows: GACS (Gui → Alt → Ctrl → Shift)
 // ("W_HM" = "Windows home")
 #define W_HM_A LGUI_T(KC_A)
@@ -67,8 +70,6 @@ enum custom_keycodes {
 #define M_HM_L LALT_T(KC_L)
 #define M_HM_SCLN RCTL_T(KC_SCLN)
 
-#define RGB_ACTUAL_AZURE 0x00, 0x7F, 0xFF
-
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_WIN_BASE] = LAYOUT_moonlander(
@@ -76,16 +77,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    A(KC_LSFT),    A(KC_LSFT), KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSLS,
         KC_LGUI,W_HM_A, W_HM_S,  W_HM_D,  W_HM_F,    KC_G,    KC_HYPR,           KC_MEH,  KC_H, W_HM_J,  W_HM_K,  W_HM_L,W_HM_SCLN, LT(_MDIA, KC_QUOT),
         KC_LSFT, LCTL_T(KC_Z),KC_X,KC_C,    KC_V,    KC_B,                                KC_N,    KC_M,    KC_COMM, KC_DOT,  LCTL_T(KC_SLSH), KC_RSFT,
-        KC_LCTL,KC_LGUI,KC_LALT,KC_LEFT,TT(_SYMB),  KC_LALT,                      LCTL_T(KC_ESC),   KC_UP,   KC_DOWN, KC_LBRC, KC_RBRC, TT(_SYMB),
-                LT(_NAV, KC_SPC),  LT(_NUM, KC_TAB), LT(_FUN, KC_ESC),           LGUI_T(KC_ENT),  KC_LCTL, LT(_SYMB, KC_BSPC)
+        KC_LCTL,KC_LGUI,KC_LALT,KC_LEFT,TT(_SYMB),  KC_LALT,                      LCTL_T(KC_ENT),   KC_UP,   KC_DOWN, KC_LBRC, KC_RBRC, TT(_SYMB),
+                LT(_NAV, KC_SPC),  LT(_NUM, KC_TAB), LT(_FUN, KC_ESC),            KC_DEL,  KC_ENT, LT(_SYMB, KC_BSPC)
     ),
     [_MAC_BASE] = LAYOUT_moonlander(
         KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,              KC_EQL, KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS,
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    A(KC_LSFT),    A(KC_LSFT), KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSLS,
         KC_HYPR, M_HM_A,M_HM_S,  M_HM_D,  M_HM_F,    KC_G,    KC_HYPR,           KC_MEH, KC_H,  M_HM_J,  M_HM_K,  M_HM_L,  M_HM_SCLN, LT(_MDIA, KC_QUOT),
         KC_LSFT, LGUI_T(KC_Z),KC_X,KC_C,    KC_V,    KC_B,                       KC_N,    KC_M,    KC_COMM, KC_DOT,  LGUI_T(KC_SLSH), KC_RSFT,
-        KC_LCTL,KC_LGUI,KC_LALT,KC_LEFT,TT(_SYMB),  KC_LALT,                      LGUI_T(KC_ESC),   KC_UP,   KC_DOWN, KC_LBRC, KC_RBRC, TT(_SYMB),
-                LT(_NAV, KC_SPC),  LT(_NUM, KC_TAB), LT(_FUN, KC_ESC),           LCTL_T(KC_ENT),  KC_LGUI, LT(_SYMB, KC_BSPC)
+        KC_LCTL,KC_LGUI,KC_LALT,KC_LEFT,TT(_SYMB),  KC_LALT,                      LGUI_T(KC_ENT),   KC_UP,   KC_DOWN, KC_LBRC, KC_RBRC, TT(_SYMB),
+                LT(_NAV, KC_SPC),  LT(_NUM, KC_TAB), LT(_FUN, KC_ESC),            KC_DEL,  KC_ENT, LT(_SYMB, KC_BSPC)
     ),
     [_GAMING] = LAYOUT_moonlander(
         KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,              KC_EQL, KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS,
@@ -93,7 +94,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_9,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_8,              KC_MEH, KC_H,    KC_J,    KC_K,    KC_L,  KC_SCLN, LT(_MDIA, KC_QUOT),
         KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                                KC_N,   KC_M, KC_COMM,  KC_DOT,LCTL_T(KC_SLSH), KC_RSFT,
         KC_LCTL,KC_LGUI,KC_LALT,KC_LEFT,TT(_SYMB),  KC_LALT,                      LCTL_T(KC_ESC), KC_UP,KC_DOWN, KC_LBRC, KC_RBRC, TT(_SYMB),
-                        KC_SPC,  LT(_NUM, KC_TAB), LT(_FUN, KC_ESC),           LGUI_T(KC_ENT),  MO(_NAV), LT(_SYMB, KC_BSPC)
+                        KC_SPC,  LT(_NUM, KC_TAB), LT(_FUN, KC_ESC),              KC_DEL,  MO(_NAV), LT(_SYMB, KC_BSPC)
     ),
 
     // Having numpad-specific numbers (e.g. KC_P1 instead of KC_1) isn't
@@ -103,24 +104,24 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_SYMB] = LAYOUT_moonlander(
         _______, _______, _______, _______, _______, _______, _______,           _______, _______, _______,   _______,   _______,    _______, _______,
         _______, _______, _______, KC_MINS,  KC_EQL, KC_PIPE, _______,           _______, _______, _______,   _______,   _______,    _______, _______,
-    _______,  KC_GRV,_______,KC_LEFT_ENCLOSE,KC_RIGHT_ENCLOSE,_______,_______,   _______, _______, KC_LSFT,MAC_GUI_WIN_CTRL,KC_LALT,MAC_CTRL_WIN_GUI, _______,
+        _______, KC_GRV, _______,KC_LEFT_ENCLOSE,KC_RIGHT_ENCLOSE,XXX,XXX,       XXX, XXX, KC_LSFT,MAC_GUI_WIN_CTRL,KC_LALT,MAC_CTRL_WIN_GUI, _______,
         _______, _______, _______, _______, _______, _______,                             _______, _______,   _______,   _______,    _______, _______,
         _______, _______, _______, _______, TG(_SYMB),        _______,           _______,          _______,   _______,   _______,    _______, TG(_SYMB),
                                             _______, _______, _______,           _______,TG(_SYMB), _______
     ),
 
     [_NUM] = LAYOUT_moonlander(
-        _______, _______, _______, _______, _______, _______, _______,           _______, _______, _______,   _______,   _______,    _______, _______,
-        _______, _______, _______,   _______, _______, _______, _______,         _______, KC_NLCK, KC_7,     KC_8,      KC_9,    KC_PAST, KC_F12,
-_______,MAC_CTRL_WIN_GUI,KC_LALT,MAC_GUI_WIN_CTRL,KC_LSFT,_______,_______,       _______, KC_PMNS, KC_4,     KC_5,      KC_6,    KC_PPLS, _______,
-        _______, _______, _______, _______, _______, _______,                             KC_COMM, KC_1,     KC_2,      KC_3,    KC_BSLS, _______,
+        _______, _______, _______, _______, _______, _______, _______,           _______, _______, _______, _______, _______,    _______, _______,
+        _______, _______, _______, _______, _______, _______, _______,           _______, KC_NLCK, KC_7,     KC_8,      KC_9,    KC_PAST, _______,
+_______,MAC_CTRL_WIN_GUI,KC_LALT,MAC_GUI_WIN_CTRL,KC_LSFT,_______,_______,       _______, KC_PMNS, KC_4,     KC_5,      KC_6,    _______, _______,
+        _______, _______, _______, _______, _______, _______,                             KC_COMM, KC_1,     KC_2,      KC_3,    KC_SLSH, _______,
         _______, _______, _______, _______, _______,        _______,             _______,          KC_0,     KC_0,   KC_PDOT,    KC_PEQL, _______,
                                             _______, _______, _______,           _______,_______, _______
     ),
 
     [_FUN] = LAYOUT_moonlander(
         _______, _______, _______, _______, _______, _______, _______,           _______, _______, _______,   _______,  _______,   _______, _______,
-        _______, _______, _______,   _______, _______, _______, _______,         _______, _______, KC_F7,     KC_F8,      KC_F9,    KC_F12, _______,
+        _______, _______, _______,   _______, _______, _______, _______,         _______, KC_CAPS, KC_F7,     KC_F8,      KC_F9,    KC_F12, _______,
 _______,MAC_CTRL_WIN_GUI,KC_LALT,MAC_GUI_WIN_CTRL,KC_LSFT,_______,_______,       _______, _______, KC_F4,     KC_F5,      KC_F6,    KC_F11, _______,
         _______, _______, _______, _______, _______, _______,                             _______, KC_F1,     KC_F2,      KC_F3,    KC_F10, _______,
         _______, _______, _______, _______, _______,        _______,             _______,          _______,   _______,  _______,   _______, _______,
@@ -139,10 +140,10 @@ _______,MAC_CTRL_WIN_GUI,KC_LALT,MAC_GUI_WIN_CTRL,KC_LSFT,_______,_______,      
     // For some reason, if _NAV is above _MDIA, then the mouse movement from _MDIA starts affecting _NAV.
     [_MDIA] = LAYOUT_moonlander(
     TO(_GAMING),_______,_______, _______, _______, _______, DF(_WIN_BASE),       DF(_MAC_BASE), _______, _______, KC_MS_BTN3, _______, _______, RESET,
-        _______, _______, _______, KC_MS_U, _______, _______, _______,           _______, _______, _______, KC_MS_U, _______, KC_PSCR, _______,
-        _______, _______, KC_MS_L, KC_MS_D, KC_MS_R, _______, _______,           _______, _______, KC_MS_L, KC_MS_D, KC_MS_R, KC_MPLY, _______,
+        _______, _______, _______, _______, _______, _______, _______,           _______, KC_WH_U, KC_WH_L, KC_MS_U, KC_WH_R, KC_PSCR, _______,
+    _______,MAC_CTRL_WIN_GUI,KC_LALT,MAC_GUI_WIN_CTRL,KC_LSFT,_______,_______,   _______, KC_WH_D, KC_MS_L, KC_MS_D, KC_MS_R, KC_MPLY, _______,
         _______, _______, _______, _______, _______, _______,                             _______, _______, KC_MPRV, KC_MNXT, KC_BTN2, _______,
-        _______, _______, _______, KC_BTN1, KC_BTN2,         _______,            _______,          KC_VOLU, KC_VOLD, KC_MUTE, _______, _______,
+        _______, _______, _______, _______, _______,         _______,            _______,          KC_VOLU, KC_VOLD, KC_MUTE, _______, _______,
                                             _______, _______, _______,           _______, _______, KC_BTN1
     ),
 };
@@ -164,6 +165,16 @@ void set_color_for_contiguous_keycodes(uint8_t start_code, uint8_t end_code, uin
     }
 }
 
+void light_up_left_mods(uint8_t r, uint8_t g, uint8_t b) {
+    const uint8_t left_mod_keycodes[] = {7, 12, 17, 22};
+    set_all_keys_colors(left_mod_keycodes, sizeof(left_mod_keycodes) / sizeof(uint8_t), r, g, b);
+}
+
+void light_up_right_mods(uint8_t r, uint8_t g, uint8_t b) {
+    const uint8_t right_mod_keycodes[] = {58, 53, 48, 43};
+    set_all_keys_colors(right_mod_keycodes, sizeof(right_mod_keycodes) / sizeof(uint8_t), r, g, b);
+}
+
 bool is_mac_the_default(void) { return layer_state_cmp(default_layer_state, _MAC_BASE); }
 
 // RGB_MATRIX_INDICATOR_SET_COLOR is just a reference to rgb_matrix_set_color
@@ -174,6 +185,12 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             // Common colors between Windows and Mac
             rgb_matrix_set_color(22, 0x00, 0xF8, 0xF8);  // 'F' key
             rgb_matrix_set_color(58, 0x00, 0xF8, 0xF8);  // 'J' key
+
+            if (host_keyboard_leds() & (1 << USB_LED_CAPS_LOCK)) {
+                // When caps lock is on, make it REALLY obvious.
+                set_color_for_contiguous_keycodes(0, 31, RGB_MAGENTA);
+                set_color_for_contiguous_keycodes(36, 67, RGB_MAGENTA);
+            }
 
             rgb_matrix_set_color(32, 0x64, 0x00, 0x64);  // LH piano key 1
             rgb_matrix_set_color(33, 0x00, 0x64, 0x00);  // LH piano key 2
@@ -197,11 +214,13 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             set_all_keys_colors(wasd_keycodes, sizeof(wasd_keycodes) / sizeof(uint8_t), RGB_GREEN);
             break;
         case _SYMB: {
+            light_up_right_mods(RGB_BLUE);
             const uint8_t sym_keycodes[] = {7, 17, 22, 16, 21, 26};
             set_all_keys_colors(sym_keycodes, sizeof(sym_keycodes) / sizeof(uint8_t), RGB_BLUE);
             break;
         }
         case _NUM: {
+            light_up_left_mods(RGB_GREEN);
             rgb_matrix_set_color(62, 0x64, 0x00, 0x00);  // 'Y' key
             if (host_keyboard_leds() & (1 << USB_LED_NUM_LOCK)) {
                 rgb_matrix_set_color(62, RGB_YELLOW);  // 'Y' key
@@ -212,11 +231,18 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             break;
         }
         case _FUN: {
-            const uint8_t numpad_keycodes[] = {57, 58, 59, 60, 52, 53, 54, 55, 47, 48, 49, 42, 43, 44};
+            light_up_left_mods(RGB_WHITE);
+
+            rgb_matrix_set_color(62, 0x64, 0x00, 0x00);  // 'Y' key
+            if (host_keyboard_leds() & (1 << USB_LED_CAPS_LOCK)) {
+                rgb_matrix_set_color(62, RGB_YELLOW);  // 'Y' key
+            }
+            const uint8_t numpad_keycodes[] = {57, 58, 59, 52, 53, 54, 47, 48, 49, 42, 43, 44};
             set_all_keys_colors(numpad_keycodes, sizeof(numpad_keycodes) / sizeof(uint8_t), RGB_WHITE);
             break;
         }
         case _NAV: {
+            light_up_left_mods(RGB_MAGENTA);
             rgb_matrix_set_color(64, 0x64, 0x64, 0x64);  // 'N' key
             rgb_matrix_set_color(42, 0x64, 0x64, 0x64);  // 'P' key
             rgb_matrix_set_color(59, 0x64, 0x00, 0x00);  // 'M' key
@@ -226,6 +252,9 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             rgb_matrix_set_color(63, 0x00, 0x64, 0x00);  // 'H' key
             rgb_matrix_set_color(57, 0x64, 0x64, 0x00);  // 'U' key
             rgb_matrix_set_color(47, 0x64, 0x64, 0x00);  // 'O' key
+
+            rgb_matrix_set_color(60, 0x64, 0x64, 0x64);  // '↑' key
+            rgb_matrix_set_color(55, 0x64, 0x64, 0x64);  // '↓' key
 
             const uint8_t keycodes[] = {52 /*I*/, 58 /*J*/, 53 /*K*/, 48 /*L*/};
             set_all_keys_colors(keycodes, sizeof(keycodes) / sizeof(uint8_t), 0x64, 0x00, 0x64);
@@ -237,6 +266,11 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 
             const uint8_t media_keycodes[] = {60, 54, 55, 49, 50, 43};
             set_all_keys_colors(media_keycodes, sizeof(media_keycodes) / sizeof(uint8_t), RGB_WHITE);
+
+            rgb_matrix_set_color(62, 0x00, 0x64, 0x00);  // 'Y' key
+            rgb_matrix_set_color(63, 0x00, 0x64, 0x00);  // 'H' key
+            rgb_matrix_set_color(57, 0x00, 0x64, 0x00);  // 'U' key
+            rgb_matrix_set_color(47, 0x00, 0x64, 0x00);  // 'O' key
 
             rgb_matrix_set_color(42, RGB_GREEN);  // 'P' key
             rgb_matrix_set_color(36, RGB_RED);    // RESET key
