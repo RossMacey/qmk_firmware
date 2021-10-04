@@ -16,6 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//
+// Keycode map is here: https://github.com/Adam13531/qmk_firmware#moonlander-notes
+//
+
 #include QMK_KEYBOARD_H
 #include "version.h"
 
@@ -53,10 +57,13 @@ enum custom_keycodes {
 #define W_HM_F LSFT_T(KC_F)
 
 // Right-hand home row mods on Windows: SCAG
-#define W_HM_J RSFT_T(KC_J)
-#define W_HM_K RCTL_T(KC_K)
+// All of these use the left-hand modifier to make some of the custom code
+// easier to write (since there's only a need to check, unset, or set a single
+// modifier rather than both).
+#define W_HM_J LSFT_T(KC_J)
+#define W_HM_K LCTL_T(KC_K)
 #define W_HM_L LALT_T(KC_L)
-#define W_HM_SCLN RGUI_T(KC_SCLN)
+#define W_HM_SCLN LGUI_T(KC_SCLN)
 
 // Left-hand home row mods on Mac: CAGS
 #define M_HM_A LCTL_T(KC_A)
@@ -65,10 +72,21 @@ enum custom_keycodes {
 #define M_HM_F LSFT_T(KC_F)
 
 // Right-hand home row mods on Mac: SGAC
-#define M_HM_J RSFT_T(KC_J)
-#define M_HM_K RGUI_T(KC_K)
+#define M_HM_J LSFT_T(KC_J)
+#define M_HM_K LGUI_T(KC_K)
 #define M_HM_L LALT_T(KC_L)
-#define M_HM_SCLN RCTL_T(KC_SCLN)
+#define M_HM_SCLN LCTL_T(KC_SCLN)
+
+enum combos { UI_HYPHEN, UIO_CAPS, COMBO_LENGTH };
+uint16_t COMBO_LEN = COMBO_LENGTH;
+
+const uint16_t PROGMEM ui_hyphen[] = {KC_U, KC_I, COMBO_END};
+const uint16_t PROGMEM uio_caps[]  = {KC_U, KC_I, KC_O, COMBO_END};
+
+combo_t key_combos[] = {
+    [UI_HYPHEN] = COMBO(ui_hyphen, KC_MINS),
+    [UIO_CAPS]  = COMBO(uio_caps, KC_CAPS),
+};
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -77,7 +95,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    A(KC_LSFT),    A(KC_LSFT), KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSLS,
         KC_LGUI,W_HM_A, W_HM_S,  W_HM_D,  W_HM_F,    KC_G,    KC_HYPR,           KC_MEH,  KC_H, W_HM_J,  W_HM_K,  W_HM_L,W_HM_SCLN, LT(_MDIA, KC_QUOT),
         KC_LSFT, LCTL_T(KC_Z),KC_X,KC_C,    KC_V,    KC_B,                                KC_N,    KC_M,    KC_COMM, KC_DOT,  LCTL_T(KC_SLSH), KC_RSFT,
-        KC_LCTL,KC_LGUI,KC_LALT,KC_LEFT,TT(_SYMB),  KC_LALT,                      LCTL_T(KC_ENT),   KC_UP,   KC_DOWN, KC_LBRC, KC_RBRC, TT(_SYMB),
+        KC_LCTL,KC_LGUI,KC_LALT,KC_LEFT,LT(_FUN,KC_ESC),KC_LALT,                  LCTL_T(KC_ENT),LT(_SYMB,KC_BSPC),KC_DOWN, KC_LBRC, KC_RBRC, TT(_SYMB),
                 LT(_NAV, KC_SPC),  LT(_NUM, KC_TAB), LT(_FUN, KC_ESC),            KC_DEL,  KC_ENT, LT(_SYMB, KC_BSPC)
     ),
     [_MAC_BASE] = LAYOUT_moonlander(
@@ -85,7 +103,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    A(KC_LSFT),    A(KC_LSFT), KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSLS,
         KC_HYPR, M_HM_A,M_HM_S,  M_HM_D,  M_HM_F,    KC_G,    KC_HYPR,           KC_MEH, KC_H,  M_HM_J,  M_HM_K,  M_HM_L,  M_HM_SCLN, LT(_MDIA, KC_QUOT),
         KC_LSFT, LGUI_T(KC_Z),KC_X,KC_C,    KC_V,    KC_B,                       KC_N,    KC_M,    KC_COMM, KC_DOT,  LGUI_T(KC_SLSH), KC_RSFT,
-        KC_LCTL,KC_LGUI,KC_LALT,KC_LEFT,TT(_SYMB),  KC_LALT,                      LGUI_T(KC_ENT),   KC_UP,   KC_DOWN, KC_LBRC, KC_RBRC, TT(_SYMB),
+        KC_LCTL,KC_LGUI,KC_LALT,KC_LEFT,LT(_FUN,KC_ESC),KC_LALT,                  LGUI_T(KC_ENT), LT(_SYMB,KC_BSPC),KC_DOWN, KC_LBRC, KC_RBRC, TT(_SYMB),
                 LT(_NAV, KC_SPC),  LT(_NUM, KC_TAB), LT(_FUN, KC_ESC),            KC_DEL,  KC_ENT, LT(_SYMB, KC_BSPC)
     ),
     [_GAMING] = LAYOUT_moonlander(
@@ -93,7 +111,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_7,         TG(_GAMING), KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSLS,
         KC_9,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_8,              KC_MEH, KC_H,    KC_J,    KC_K,    KC_L,  KC_SCLN, LT(_MDIA, KC_QUOT),
         KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                                KC_N,   KC_M, KC_COMM,  KC_DOT,LCTL_T(KC_SLSH), KC_RSFT,
-        KC_LCTL,KC_LGUI,KC_LALT,KC_LEFT,TT(_SYMB),  KC_LALT,                      LCTL_T(KC_ESC), KC_UP,KC_DOWN, KC_LBRC, KC_RBRC, TT(_SYMB),
+        KC_LCTL,KC_LGUI,KC_LALT,KC_LEFT,  KC_SPC, KC_LALT,                        LCTL_T(KC_ESC), LT(_SYMB,KC_BSPC),KC_DOWN, KC_LBRC, KC_RBRC, TT(_SYMB),
                         KC_SPC,  LT(_NUM, KC_TAB), LT(_FUN, KC_ESC),              KC_DEL,  MO(_NAV), LT(_SYMB, KC_BSPC)
     ),
 
@@ -107,7 +125,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, KC_GRV, _______,KC_LEFT_ENCLOSE,KC_RIGHT_ENCLOSE,XXX,XXX,       XXX, XXX, KC_LSFT,MAC_GUI_WIN_CTRL,KC_LALT,MAC_CTRL_WIN_GUI, _______,
         _______, _______, _______, _______, _______, _______,                             _______, _______,   _______,   _______,    _______, _______,
         _______, _______, _______, _______, TG(_SYMB),        _______,           _______,          _______,   _______,   _______,    _______, TG(_SYMB),
-                                            _______, _______, _______,           _______,TG(_SYMB), _______
+                                            _______, _______, _______,           TG(_SYMB),_______,_______
     ),
 
     [_NUM] = LAYOUT_moonlander(
@@ -192,9 +210,11 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
                 set_color_for_contiguous_keycodes(36, 67, RGB_MAGENTA);
             }
 
+            rgb_matrix_set_color(24, 0x64, 0x64, 0x64);  // '→' key
             rgb_matrix_set_color(32, 0x64, 0x00, 0x64);  // LH piano key 1
             rgb_matrix_set_color(33, 0x00, 0x64, 0x00);  // LH piano key 2
             rgb_matrix_set_color(34, 0x64, 0x64, 0x64);  // LH piano key 3
+            // rgb_matrix_set_color(60, 0x00, 0x00, 0x64);  // '↑' key
             rgb_matrix_set_color(68, 0x00, 0x00, 0x64);  // RH piano key 1
 
             // MAC (this is here because default layers just work strangely I guess; when the Mac layer is default, the Windows layer is still the highest layer)
@@ -261,6 +281,8 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             break;
         }
         case _MDIA: {
+            light_up_left_mods(RGB_CYAN);
+
             const uint8_t mouse_keycodes[] = {58, 51, 52, 53, 48, 44, 68};
             set_all_keys_colors(mouse_keycodes, sizeof(mouse_keycodes) / sizeof(uint8_t), RGB_CYAN);
 
@@ -371,8 +393,26 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        // "A" and "S" are the source of a lot of rolls, so activating their
+        // hold functions too soon can be a cause of frustration.
+        //
+        // Note that it seems like an absolute value of about 185 is good.
+        case W_HM_A:
+        case M_HM_A:
+        case W_HM_S:
+            // case M_HM_S: // ← these keys are the same between Windows and Mac
+            return TAPPING_TERM + 25;
+        default:
+            return TAPPING_TERM;
+    }
+}
+
 bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
+        // Make SDF JKL be permissive-hold keys. I don't want pinkies to be
+        // permissive hold due to rolling those more frequently.
         // Windows
         case W_HM_S:
         case W_HM_D:
@@ -393,4 +433,15 @@ bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
             // Do not select the hold action when another key is tapped.
             return false;
     }
+}
+
+uint16_t get_combo_term(uint16_t index, combo_t *combo) {
+    switch (index) {
+        // "UI" is a common enough bigram in software engineering that I want to
+        // allow rolls while still allowing combos on it.
+        case UI_HYPHEN:
+            return 40;
+    }
+
+    return COMBO_TERM;
 }

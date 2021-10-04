@@ -79,10 +79,15 @@
 // Turn off RGB when USB is suspended
 #define RGB_DISABLE_WHEN_USB_SUSPENDED
 
-// Setting this to ≤100 makes home-row mods very hard to use since I end up holding a key naturally for 100 ms sometimes (especially with my LH). However,
-// having it at the default makes modifier keys and the mouse a little harder to
-// use since QMK isn't aware of keys pressed on the mouse.
-#define TAPPING_TERM 200
+// Setting this to ≤100 makes home-row mods very hard to use since I end up
+// holding a key naturally for 100 ms sometimes (especially with my LH).
+// However, having it at the default makes modifier keys and the mouse a little
+// harder to use since QMK isn't aware of keys pressed on the mouse.
+#define TAPPING_TERM 160
+
+// I hold some keys for a just a bit too long (especially "S" for some reason),
+// so this lets me increase the tapping term on those keys.
+#define TAPPING_TERM_PER_KEY
 
 // Make it so that mod-tap keys run their tap actions when you release the
 // mod-tap key before releasing the modified key.
@@ -123,3 +128,7 @@
 // Bypasses having to set up via these instructions:
 // https://beta.docs.qmk.fm/using-qmk/software-features/feature_auto_shift#setup
 #define AUTO_SHIFT_NO_SETUP
+
+// Some common bigrams should have lower COMBO_TERMs so that I only activate the
+// combo when I really mean to.
+#define COMBO_TERM_PER_COMBO
