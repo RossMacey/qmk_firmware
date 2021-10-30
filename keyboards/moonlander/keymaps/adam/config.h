@@ -120,15 +120,6 @@
 // those super bright ones shining in my eyes. 😡
 #define MOONLANDER_USER_LEDS
 
-// Auto Shift options
-// Disable Auto Shift on letter keys
-#define NO_AUTO_SHIFT_ALPHA
-// This is the time needed before the shifted key will be chosen
-#define AUTO_SHIFT_TIMEOUT TAPPING_TERM
-// Bypasses having to set up via these instructions:
-// https://beta.docs.qmk.fm/using-qmk/software-features/feature_auto_shift#setup
-#define AUTO_SHIFT_NO_SETUP
-
 // Some common bigrams should have lower COMBO_TERMs so that I only activate the
 // combo when I really mean to.
 #define COMBO_TERM_PER_COMBO

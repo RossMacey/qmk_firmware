@@ -94,7 +94,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,              KC_EQL, KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS,
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    A(KC_LSFT),    A(KC_LSFT), KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSLS,
         KC_LGUI,W_HM_A, W_HM_S,  W_HM_D,  W_HM_F,    KC_G,    KC_HYPR,           KC_MEH,  KC_H, W_HM_J,  W_HM_K,  W_HM_L,W_HM_SCLN, LT(_MDIA, KC_QUOT),
-        KC_LSFT, LCTL_T(KC_Z),KC_X,KC_C,    KC_V,    KC_B,                                KC_N,    KC_M,    KC_COMM, KC_DOT,  LCTL_T(KC_SLSH), KC_RSFT,
+        KC_LSFT, LCTL_T(KC_Z),KC_X,KC_C,    KC_V,    KC_B,                                KC_N,   KC_M, KC_COMM,  KC_DOT, KC_SLSH,   KC_RSFT,
         KC_LCTL,KC_LGUI,KC_LALT,KC_LEFT,LT(_FUN,KC_ESC),KC_LALT,                  LCTL_T(KC_ENT),LT(_SYMB,KC_BSPC),KC_DOWN, KC_LBRC, KC_RBRC, TT(_SYMB),
                 LT(_NAV, KC_SPC),  LT(_NUM, KC_TAB), LT(_FUN, KC_ESC),            KC_DEL,  KC_ENT, LT(_SYMB, KC_BSPC)
     ),
@@ -102,7 +102,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,              KC_EQL, KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS,
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    A(KC_LSFT),    A(KC_LSFT), KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSLS,
         KC_HYPR, M_HM_A,M_HM_S,  M_HM_D,  M_HM_F,    KC_G,    KC_HYPR,           KC_MEH, KC_H,  M_HM_J,  M_HM_K,  M_HM_L,  M_HM_SCLN, LT(_MDIA, KC_QUOT),
-        KC_LSFT, LGUI_T(KC_Z),KC_X,KC_C,    KC_V,    KC_B,                       KC_N,    KC_M,    KC_COMM, KC_DOT,  LGUI_T(KC_SLSH), KC_RSFT,
+        KC_LSFT, LGUI_T(KC_Z),KC_X,KC_C,    KC_V,    KC_B,                               KC_N,    KC_M, KC_COMM,  KC_DOT,  KC_SLSH, KC_RSFT,
         KC_LCTL,KC_LGUI,KC_LALT,KC_LEFT,LT(_FUN,KC_ESC),KC_LALT,                  LGUI_T(KC_ENT), LT(_SYMB,KC_BSPC),KC_DOWN, KC_LBRC, KC_RBRC, TT(_SYMB),
                 LT(_NAV, KC_SPC),  LT(_NUM, KC_TAB), LT(_FUN, KC_ESC),            KC_DEL,  KC_ENT, LT(_SYMB, KC_BSPC)
     ),
@@ -110,7 +110,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,              KC_EQL, KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS,
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_7,         TG(_GAMING), KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSLS,
         KC_9,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_8,              KC_MEH, KC_H,    KC_J,    KC_K,    KC_L,  KC_SCLN, LT(_MDIA, KC_QUOT),
-        KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                                KC_N,   KC_M, KC_COMM,  KC_DOT,LCTL_T(KC_SLSH), KC_RSFT,
+        KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                               KC_N,    KC_M, KC_COMM,  KC_DOT,  KC_SLSH, KC_RSFT,
         KC_LCTL,KC_LGUI,KC_LALT,KC_LEFT,  KC_SPC, KC_LALT,                        LCTL_T(KC_ESC), LT(_SYMB,KC_BSPC),KC_DOWN, KC_LBRC, KC_RBRC, TT(_SYMB),
                         KC_SPC,  LT(_NUM, KC_TAB), LT(_FUN, KC_ESC),              KC_DEL,  MO(_NAV), LT(_SYMB, KC_BSPC)
     ),
@@ -123,7 +123,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, _______, _______, _______, _______, _______, _______,           _______, _______, _______,   _______,   _______,    _______, _______,
         _______, _______, _______, KC_MINS,  KC_EQL, KC_PIPE, _______,           _______, _______, _______,   _______,   _______,    _______, _______,
         _______, KC_GRV, _______,KC_LEFT_ENCLOSE,KC_RIGHT_ENCLOSE,XXX,XXX,       XXX, XXX, KC_LSFT,MAC_GUI_WIN_CTRL,KC_LALT,MAC_CTRL_WIN_GUI, _______,
-        _______, _______, _______, _______, _______, _______,                             _______, _______,   _______,   _______,    _______, _______,
+        _______, _______, _______, KC_LBRC, KC_RBRC, _______,                             _______, _______,   _______,   _______,    _______, _______,
         _______, _______, _______, _______, TG(_SYMB),        _______,           _______,          _______,   _______,   _______,    _______, TG(_SYMB),
                                             _______, _______, _______,           TG(_SYMB),_______,_______
     ),
@@ -133,7 +133,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, _______, _______, _______, _______, _______, _______,           _______, KC_NLCK, KC_7,     KC_8,      KC_9,    KC_PAST, _______,
 _______,MAC_CTRL_WIN_GUI,KC_LALT,MAC_GUI_WIN_CTRL,KC_LSFT,_______,_______,       _______, KC_PMNS, KC_4,     KC_5,      KC_6,    _______, _______,
         _______, _______, _______, _______, _______, _______,                             KC_COMM, KC_1,     KC_2,      KC_3,    KC_SLSH, _______,
-        _______, _______, _______, _______, _______,        _______,             _______,          KC_0,     KC_0,   KC_PDOT,    KC_PEQL, _______,
+        _______, _______, _______, _______, _______,        _______,             _______,          KC_0,     KC_0,    KC_DOT,    KC_PEQL, _______,
                                             _______, _______, _______,           _______,_______, _______
     ),
 
@@ -152,7 +152,7 @@ _______,MAC_CTRL_WIN_GUI,KC_LALT,MAC_GUI_WIN_CTRL,KC_LSFT,_______,_______,      
     _______,MAC_CTRL_WIN_GUI,KC_LALT,MAC_GUI_WIN_CTRL,KC_LSFT,_______,_______,   _______, KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, _______, _______,
         _______, _______, _______, _______, _______, _______,                             KC_ESC,  KC_BSPC, KC_ENT,  KC_DEL,  _______, _______,
         _______, _______, _______, _______, _______,         _______,            _______,          C(S(KC_TAB)),C(KC_TAB), _______, _______, _______,
-                                            _______, _______, _______,           _______, _______, _______
+                                            _______, _______, _______,           _______, _______, KC_BSPC
     ),
 
     // For some reason, if _NAV is above _MDIA, then the mouse movement from _MDIA starts affecting _NAV.
@@ -201,13 +201,13 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     switch (get_highest_layer(layer_state)) {
         case _WIN_BASE:
             // Common colors between Windows and Mac
-            rgb_matrix_set_color(22, 0x00, 0xF8, 0xF8);  // 'F' key
-            rgb_matrix_set_color(58, 0x00, 0xF8, 0xF8);  // 'J' key
+            // rgb_matrix_set_color(22, 0x00, 0xF8, 0xF8);  // 'F' key
+            // rgb_matrix_set_color(58, 0x00, 0xF8, 0xF8);  // 'J' key
 
             if (host_keyboard_leds() & (1 << USB_LED_CAPS_LOCK)) {
                 // When caps lock is on, make it REALLY obvious.
-                set_color_for_contiguous_keycodes(0, 31, RGB_MAGENTA);
-                set_color_for_contiguous_keycodes(36, 67, RGB_MAGENTA);
+                set_color_for_contiguous_keycodes(0, 31, 0x64, 0x00, 0x64);
+                set_color_for_contiguous_keycodes(36, 67, 0x64, 0x00, 0x64);
             }
 
             rgb_matrix_set_color(24, 0x64, 0x64, 0x64);  // '→' key
@@ -393,16 +393,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
+// Increasing the tapping term means that dual-function keys have to be held for
+// longer before they're treated as their "hold" action.
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         // "A" and "S" are the source of a lot of rolls, so activating their
         // hold functions too soon can be a cause of frustration.
         //
+        // I just tend to hold "L" for longer, and since it's bound to alt and
+        // all of my numbers are also on my right hand, I may as well increase
+        // it.
+        //
         // Note that it seems like an absolute value of about 185 is good.
         case W_HM_A:
         case M_HM_A:
         case W_HM_S:
-            // case M_HM_S: // ← these keys are the same between Windows and Mac
+        case W_HM_L:
+            // case M_HM_L: // ← this is the same between Windows and Mac
+            // case M_HM_S: // ← this is the same between Windows and Mac
             return TAPPING_TERM + 25;
         default:
             return TAPPING_TERM;
@@ -411,20 +419,18 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 
 bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        // Make SDF JKL be permissive-hold keys. I don't want pinkies to be
-        // permissive hold due to rolling those more frequently.
+        // Make DF JK be permissive-hold keys. I don't want pinkies to be
+        // permissive hold due to rolling those more frequently. I learned the
+        // same thing happens with my ring fingers too (especially with the word
+        // "said").
         // Windows
-        case W_HM_S:
         case W_HM_D:
         case W_HM_F:
         case W_HM_J:
         case W_HM_K:
-        case W_HM_L:
         // Mac
-        // case M_HM_S: // ← these keys are the same between Windows and Mac
-        // case M_HM_F: // ← these keys are the same between Windows and Mac
-        // case M_HM_J: // ← these keys are the same between Windows and Mac
-        // case M_HM_L: // ← these keys are the same between Windows and Mac
+        // case M_HM_F: // ← this is the same between Windows and Mac
+        // case M_HM_J: // ← this is the same between Windows and Mac
         case M_HM_D:
         case M_HM_K:
             // Immediately select the hold action when another key is tapped.
@@ -437,10 +443,11 @@ bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
 
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
-        // "UI" is a common enough bigram in software engineering that I want to
-        // allow rolls while still allowing combos on it.
+        // "UI" is a common enough bigram in software engineering ("UI",
+        // "build", "requirements") that the combo time needs to be pretty low
+        // so that natural typing doesn't trigger it.
         case UI_HYPHEN:
-            return 40;
+            return 20;
     }
 
     return COMBO_TERM;
