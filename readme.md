@@ -1,6 +1,6 @@
 # This repo
 
-I just wanted to save off my keymaps without merging them with the official repository (since I don't really think others would benefit from my layouts).
+I just wanted to save off my keymaps without merging them with the official repository (since I don't think there's much benefit for others).
 
 ## Usage from Windows
 
@@ -22,6 +22,8 @@ I just wanted to save off my keymaps without merging them with the official repo
 
 ## Changes to the GMMK Pro keymap
 
+[Link to my keymap folder](./keyboards/gmmk/pro/ansi/keymaps/adam).
+
 - Semicolon - this is a "custom" layer-tap key to get into the `_NAV` layer (the "custom" part comes from treating all keys _after_ a semicolon as being modified regardless of whether the semicolon was still held).
 - Encoder
   - Pressing it in pauses/plays media
@@ -40,13 +42,21 @@ I just wanted to save off my keymaps without merging them with the official repo
 
 ## Moonlander notes
 
+[Link to my keymap folder](./keyboards/moonlander/keymaps/adam).
+
 - Default layer: rather than rely on Karabiner-Elements on macOS to remap modifier keys, I now rely on default layers to do this. `get_highest_layer` _always_ returns `_WIN_BASE` for some reason, so there's an extra check in there to see if the default layer is set to `_MAC_BASE`.
 - Moonlander LED codes (credit to [rtings](https://www.rtings.com/keyboard/reviews/zsa/moonlander) for the base picture):
   ![image](https://user-images.githubusercontent.com/7192897/133934938-95d21fd5-ec41-47c8-9d8a-0c7b1b327120.png)
 
 ## Corne notes
 
+[Link to my keymap folder](./keyboards/crkbd/keymaps/adam).
+
 - See [this repo](https://github.com/Adam13531/crkbd/tree/choc-v3) for the choc v3 Corne that I made.
+- To reset the Corne, you can do any of the following (in order of easy → hard):
+  - Press the `RESET` key if you already have it mapped in QMK (my keymap _does_ have this mapped)
+  - Hold the Q or P key (depending on which half of the keyboard you're flashing) while plugging in the keyboard
+  - Bridge the `RST` and `GND` pins
 
 ## Helpful links
 
