@@ -67,3 +67,4 @@ I just wanted to save off my keymaps without merging them with the official repo
 
 - General troubles: try `qmk doctor` to detect issues and `qmk clean`
 - Linker issues: this could be due to having something in `rules.mk`; I once hit this when I had `COMBO_ENABLE = yes` in there, and removing it fixed everything.
+- If `KC_CAPS` is being sent as ctrl, then it's apparently [this issue](https://github.com/qmk/qmk_firmware/issues/2813) and you just have to tap the `KC_CAPS` key a bunch of times. I assume this is some issue with `SPLIT_MODS_ENABLE` since that's mostly what I was changing when this started happening.
