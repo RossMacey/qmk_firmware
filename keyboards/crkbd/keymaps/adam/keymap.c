@@ -105,14 +105,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
          KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,     KC_U,    KC_I,    KC_O,               KC_P,
        W_HM_A,  W_HM_S,  W_HM_D,  W_HM_F,    KC_G,                         KC_H,   W_HM_J,  W_HM_K,  W_HM_L,          W_HM_QUOT,
  LCTL_T(KC_Z),    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,     KC_M, KC_COMM,  KC_DOT, LT(_MDIA, KC_SLSH),
-    LT(_FUN, KC_ESC),  LT(_NAV, KC_SPC), LT(_NUM, KC_TAB),               KC_ENT, LT(_SYMB, KC_BSPC), KC_SCLN
+    LT(_FUN, KC_ESC),  LT(_NAV, KC_SPC), LT(_NUM, KC_TAB),               KC_ENT, LT(_SYMB, KC_BSPC), MO(_NAV)
   ),
 
   [_MAC_BASE] = LAYOUT_split_3x5_3(
          KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,     KC_U,    KC_I,    KC_O,               KC_P,
        M_HM_A,  M_HM_S,  M_HM_D,  M_HM_F,    KC_G,                         KC_H,   M_HM_J,  M_HM_K,  M_HM_L,          M_HM_QUOT,
  LGUI_T(KC_Z),    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,     KC_M, KC_COMM,  KC_DOT, LT(_MDIA, KC_SLSH),
-    LT(_FUN, KC_ESC),  LT(_NAV, KC_SPC), LT(_NUM, KC_TAB),               KC_ENT, LT(_SYMB, KC_BSPC), KC_SCLN
+    LT(_FUN, KC_ESC),  LT(_NAV, KC_SPC), LT(_NUM, KC_TAB),               KC_ENT, LT(_SYMB, KC_BSPC), MO(_NAV)
   ),
 
     // My old layout. Saving this in case I go crazy trying the new one.
@@ -137,19 +137,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [_FUN] = LAYOUT_split_3x5_3(
-             _______, _______,         _______, _______, _______,            _______, KC_F7,     KC_F8, KC_F9, KC_F12,
+                KC_1,    KC_2,            KC_3,    KC_4,    KC_5,            _______, KC_F7,     KC_F8, KC_F9, KC_F12,
     MAC_CTRL_WIN_GUI, KC_LALT,MAC_GUI_WIN_CTRL, KC_LSFT, _______,            _______, KC_F4,     KC_F5, KC_F6, KC_F11,
-             _______, _______,         _______, _______, _______,            _______, KC_F1,     KC_F2, KC_F3, KC_F10,
+                KC_6,    KC_7,            KC_8,    KC_9,    KC_0,            _______, KC_F1,     KC_F2, KC_F3, KC_F10,
                                        _______, _______, _______,            _______, KC_CAPS, _______
   ),
   [_NAV] = LAYOUT_split_3x5_3(
-             _______, _______,         _______, _______, _______,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_TAB,
-    MAC_CTRL_WIN_GUI, KC_LALT,MAC_GUI_WIN_CTRL, KC_LSFT, _______,            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, KC_SPC,
-             _______, _______,         _______, _______, _______,            KC_ESC,  KC_BSPC, KC_ENT,  KC_DEL, _______,
-                                       _______, _______, _______,            _______, KC_BSPC, _______
+             _______, RCS(KC_TAB),         _______,C(KC_TAB), _______,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_TAB,
+    MAC_CTRL_WIN_GUI,     KC_LALT,MAC_GUI_WIN_CTRL, KC_LSFT, _______,            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, KC_SPC,
+             _______,     _______,         _______, _______, _______,            KC_ESC,  KC_BSPC, KC_ENT,  KC_DEL, _______,
+                                           _______, _______, _______,            _______, KC_BSPC, _______
   ),
   [_MDIA] = LAYOUT_split_3x5_3(
-               RESET, _______,          _______, DF(_MAC_BASE), DF(_WIN_BASE),     KC_WH_U, KC_MPRV, KC_MS_U, KC_MNXT, KC_PSCR,
+               RESET, _______,          RGB_TOG, DF(_MAC_BASE), DF(_WIN_BASE),     KC_WH_U, KC_MPRV, KC_MS_U, KC_MNXT, KC_PSCR,
     MAC_CTRL_WIN_GUI, KC_LALT, MAC_GUI_WIN_CTRL,       KC_LSFT, _______,           KC_WH_D, KC_MS_L, KC_MS_D, KC_MS_R, _______,
              _______, _______,          _______,       _______, _______,           KC_MUTE, KC_VOLD, KC_MPLY, KC_VOLU, _______,
                                         _______,       _______, _______,           KC_BTN3, KC_BTN1, KC_BTN2
@@ -228,6 +228,10 @@ void light_up_right_mods(uint8_t r, uint8_t g, uint8_t b) {
 
 bool is_mac_the_default(void) { return layer_state_cmp(default_layer_state, _MAC_BASE); }
 
+bool is_shift_held(void) { return (get_mods() & MOD_BIT(KC_LSFT)) || (get_mods() & MOD_BIT(KC_RSFT)); }
+bool is_ctrl_held(void) { return get_mods() & MOD_BIT(KC_LCTL); }
+bool is_gui_held(void) { return get_mods() & MOD_BIT(KC_LGUI); }
+
 #ifdef RGB_MATRIX_ENABLE
 void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     // Diagram of underglow LEDs on the LH side when viewed from above:
@@ -262,6 +266,18 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
                 set_color_for_contiguous_keycodes(0, 50, RGB_DARK_MAGENTA);
             }
 
+            // Make it easy to tell when each home-row mod is held for long
+            // enough by lighting up the corresponding LEDs on both sides of the
+            // keyboard.
+            if (is_shift_held()) {
+                set_color_split(11, RGB_DARK_GREEN);  // 'F' key
+                set_color_split(38, RGB_DARK_GREEN);  // 'J' key
+            }
+            if (get_mods() & MOD_BIT(KC_LALT)) {
+                set_color_split(19, RGB_DARK_GREEN);  // 'S' key
+                set_color_split(46, RGB_DARK_GREEN);  // 'L' key
+            }
+
             set_color_split(14, RGB_DARK_WHITE);    // LH thumb key 1
             set_color_split(13, RGB_DARK_MAGENTA);  // LH thumb key 2
             set_color_split(6, RGB_DARK_GREEN);     // LH thumb key 3
@@ -271,10 +287,28 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             // guess; when the Mac layer is default, the Windows layer is still
             // the highest layer)
             if (is_mac_the_default()) {
+                if (is_ctrl_held()) {
+                    set_color_split(22, RGB_DARK_GREEN);  // 'A' key
+                    set_color_split(49, RGB_DARK_GREEN);  // ';' key
+                }
+                if (is_gui_held()) {
+                    set_color_split(16, RGB_DARK_GREEN);  // 'D' key
+                    set_color_split(43, RGB_DARK_GREEN);  // 'K' key
+                }
+                // Set underglow
                 set_color_for_contiguous_keycodes(0, 5, 0x32, 0x32, 0x32);
                 set_color_for_contiguous_keycodes(27, 32, 0x32, 0x32, 0x32);
             } else {
                 // WINDOWS
+                if (is_gui_held()) {
+                    set_color_split(22, RGB_DARK_GREEN);  // 'A' key
+                    set_color_split(49, RGB_DARK_GREEN);  // ';' key
+                }
+                if (is_ctrl_held()) {
+                    set_color_split(16, RGB_DARK_GREEN);  // 'D' key
+                    set_color_split(43, RGB_DARK_GREEN);  // 'K' key
+                }
+                // Set underglow
                 set_color_for_contiguous_keycodes(0, 5, 0x00, 0x32, 0x00);
                 set_color_for_contiguous_keycodes(27, 32, 0x00, 0x32, 0x00);
             }
@@ -364,8 +398,8 @@ void keyboard_post_init_user(void) {
 // https://www.reddit.com/r/olkb/comments/oflwv6/how_do_i_change_qmk_layer_tap_behavior/h4l7u8n/?utm_source=reddit&utm_medium=web2x&context=3
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     bool isPressed   = record->event.pressed;
-    bool isCtrlHeld  = get_mods() & MOD_BIT(KC_LCTL);
-    bool isShiftHeld = (get_mods() & MOD_BIT(KC_LSFT)) || (get_mods() & MOD_BIT(KC_RSFT));
+    bool isCtrlHeld  = is_ctrl_held();
+    bool isShiftHeld = is_shift_held();
 
     switch (keycode) {
         case MAC_CTRL_WIN_GUI: {
@@ -427,6 +461,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
+#ifdef TAPPING_TERM_PER_KEY
 // Increasing the tapping term means that dual-function keys have to be held for
 // longer before they're treated as their "hold" action.
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
@@ -455,7 +490,9 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
             return TAPPING_TERM;
     }
 }
+#endif
 
+#ifdef PERMISSIVE_HOLD_PER_KEY
 bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         // Make DF JK be permissive-hold keys. I don't want pinkies to be
@@ -479,7 +516,9 @@ bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
             return false;
     }
 }
+#endif
 
+#ifdef COMBO_TERM_PER_COMBO
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
         // "UI" is a common enough bigram in software engineering ("UI",
@@ -491,3 +530,4 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
 
     return COMBO_TERM;
 }
+#endif

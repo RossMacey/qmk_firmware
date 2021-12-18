@@ -27,7 +27,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // #define MASTER_RIGHT
 // #define EE_HANDS
 
+// This sends whether or not ctrl, shift, etc. are held to the secondary half of
+// the keyboard. Note that it seems to "break" one half entirely unless BOTH
+// halves have this enabled.
+#define SPLIT_MODS_ENABLE
+
+// Allow the current layer to be synced between the halves.
 #define SPLIT_LAYER_STATE_ENABLE
+
+// Allow the state of caps lock, num lock, etc. to be synced between the halves.
 #define SPLIT_LED_STATE_ENABLE
 #define RGBLED_SPLIT \
     { 27, 27 }
@@ -124,6 +132,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // Allow mod-tap to work without having to wait for TAPPING_TERM as long as it's
 // held for the duration of the modified key being pressed/released.
+//
+// Tue 12/14/2021 - 09:09 PM - on second thought, this results in too many typos
+// and accidental hotkeys.
 // #define PERMISSIVE_HOLD
 // #define PERMISSIVE_HOLD_PER_KEY
 
@@ -138,7 +149,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MOUSEKEY_WHEEL_TIME_TO_MAX 40
 #define MOUSEKEY_WHEEL_DELAY 400
 
-// Allot for toggling to a TT layer with just two taps.
+// Allow toggling to a TT layer with just two taps.
 #define TAPPING_TOGGLE 2
 
 // Tapping a dual-function key twice will enable its hold action rather than
