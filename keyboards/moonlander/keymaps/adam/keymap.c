@@ -112,7 +112,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_9,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_8,              KC_MEH, KC_H,    KC_J,    KC_K,    KC_L,  KC_SCLN, LT(_MDIA, KC_QUOT),
         KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                               KC_N,    KC_M, KC_COMM,  KC_DOT,  KC_SLSH, KC_RSFT,
         KC_LCTL,KC_LGUI,KC_LALT,KC_LEFT,  KC_SPC, KC_LALT,                        LCTL_T(KC_ESC), LT(_SYMB,KC_BSPC),KC_DOWN, KC_LBRC, KC_RBRC, TT(_SYMB),
-                        KC_SPC,  LT(_NUM, KC_TAB), LT(_FUN, KC_ESC),              KC_DEL,  MO(_NAV), LT(_SYMB, KC_BSPC)
+                        KC_SPC,  LT(_NUM, KC_TAB), LT(_FUN, KC_ESC),              KC_DEL,  LT(_NAV,KC_ENT), LT(_SYMB, KC_BSPC)
     ),
 
     // Having numpad-specific numbers (e.g. KC_P1 instead of KC_1) isn't
@@ -121,8 +121,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // move between open applications.
     [_SYMB] = LAYOUT_moonlander(
         _______, _______, _______, _______, _______, _______, _______,           _______, _______, _______,   _______,   _______,    _______, _______,
-        _______, _______, _______, KC_MINS,  KC_EQL, KC_PIPE, _______,           _______, _______, _______,   _______,   _______,    _______, _______,
-        _______, KC_GRV, _______,KC_LEFT_ENCLOSE,KC_RIGHT_ENCLOSE,XXX,XXX,       XXX, XXX, KC_LSFT,MAC_GUI_WIN_CTRL,KC_LALT,MAC_CTRL_WIN_GUI, _______,
+        _______, _______, _______, KC_MINS,  KC_EQL, KC_BSLS, _______,           _______, _______, _______,   _______,   _______,    _______, _______,
+        _______, KC_GRV,  KC_QUOT,KC_LEFT_ENCLOSE,KC_RIGHT_ENCLOSE,XXX,XXX,       XXX, XXX, KC_LSFT,MAC_GUI_WIN_CTRL,KC_LALT,MAC_CTRL_WIN_GUI, _______,
         _______, _______, _______, KC_LBRC, KC_RBRC, _______,                             _______, _______,   _______,   _______,    _______, _______,
         _______, _______, _______, _______, TG(_SYMB),        _______,           _______,          _______,   _______,   _______,    _______, TG(_SYMB),
                                             _______, _______, _______,           TG(_SYMB),_______,_______
@@ -131,9 +131,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_NUM] = LAYOUT_moonlander(
         _______, _______, _______, _______, _______, _______, _______,           _______, _______, _______, _______, _______,    _______, _______,
         _______, _______, _______, _______, _______, _______, _______,           _______, KC_NLCK, KC_7,     KC_8,      KC_9,    KC_PAST, _______,
-_______,MAC_CTRL_WIN_GUI,KC_LALT,MAC_GUI_WIN_CTRL,KC_LSFT,_______,_______,       _______, KC_PMNS, KC_4,     KC_5,      KC_6,    _______, _______,
+_______,MAC_CTRL_WIN_GUI,KC_LALT,MAC_GUI_WIN_CTRL,KC_LSFT,_______,_______,       _______, KC_MINS, KC_4,     KC_5,      KC_6,    _______, _______,
         _______, _______, _______, _______, _______, _______,                             KC_COMM, KC_1,     KC_2,      KC_3,    KC_SLSH, _______,
-        _______, _______, _______, _______, _______,        _______,             _______,          KC_0,     KC_0,    KC_DOT,    KC_PEQL, _______,
+        _______, _______, _______, _______, _______,        _______,             _______,          KC_0,     KC_0,    KC_DOT,    KC_EQL , _______,
                                             _______, _______, _______,           _______,_______, _______
     ),
 
@@ -397,6 +397,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // longer before they're treated as their "hold" action.
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
+        // The shift keys are much more common and typically more deliberate as
+        // a result.
+        case W_HM_F:
+        case W_HM_J:
+            return TAPPING_TERM - 30;
         // "A" and "S" are the source of a lot of rolls, so activating their
         // hold functions too soon can be a cause of frustration.
         //
