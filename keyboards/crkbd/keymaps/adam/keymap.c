@@ -94,13 +94,9 @@ uint16_t COMBO_LEN = COMBO_LENGTH;
 const uint16_t PROGMEM ui_hyphen[] = {KC_U, KC_I, COMBO_END};
 const uint16_t PROGMEM uio_caps[]  = {KC_U, KC_I, KC_O, COMBO_END};
 
-// Fri 12/17/2021 - 05:47 PM - for some reason, KC_CAPS is being sent as ctrl,
-// but only when the left half of the keyboard is plugged in to USB.
-#define CAPS_WORKAROUND LT(_FUN, KC_CAPS)
-
 combo_t key_combos[] = {
     [UI_HYPHEN] = COMBO(ui_hyphen, KC_MINS),
-    [UIO_CAPS]  = COMBO(uio_caps, CAPS_WORKAROUND),
+    [UIO_CAPS]  = COMBO(uio_caps, KC_CAPS),
 };
 
 // clang-format off
@@ -119,13 +115,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     LT(_FUN, KC_ESC),  LT(_NAV, KC_SPC), LT(_NUM, KC_TAB),               KC_ENT, LT(_SYMB, KC_BSPC), MO(_NAV)
   ),
 
-    // My old layout. Saving this in case I go crazy trying the new one.
-//   [_SYMB] = LAYOUT_split_3x5_3(
-//     _______,    S(KC_QUOT),    KC_MINS,  KC_EQL, KC_BSLS,                 _______,     _______,    _______,  _______, _______,
-//     KC_GRV,  KC_QUOT,KC_LEFT_ENCLOSE,KC_RIGHT_ENCLOSE, _______,         _______,     KC_LSFT,MAC_GUI_WIN_CTRL,KC_LALT,MAC_CTRL_WIN_GUI,
-//     KC_SCLN,    S(KC_SCLN),    KC_LBRC, KC_RBRC,    _______,                 _______,     _______,    _______,  _______, _______,
-//                             _______, _______, _______,                       _______,     _______,    _______
-//   ),
   [_SYMB] = LAYOUT_split_3x5_3(
     KC_MINS,    S(KC_MINS),         KC_EQL,       S(KC_EQL), KC_BSLS,         _______, _______,          _______, _______,         _______,
     KC_QUOT,    S(KC_QUOT),KC_LEFT_ENCLOSE,KC_RIGHT_ENCLOSE,  KC_GRV,         _______, KC_LSFT, MAC_GUI_WIN_CTRL, KC_LALT,MAC_CTRL_WIN_GUI,
@@ -144,7 +133,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                 KC_1,    KC_2,            KC_3,    KC_4,    KC_5,            _______, KC_F7,     KC_F8, KC_F9, KC_F12,
     MAC_CTRL_WIN_GUI, KC_LALT,MAC_GUI_WIN_CTRL, KC_LSFT, _______,            _______, KC_F4,     KC_F5, KC_F6, KC_F11,
                 KC_6,    KC_7,            KC_8,    KC_9,    KC_0,            _______, KC_F1,     KC_F2, KC_F3, KC_F10,
-                                       _______, _______, _______,            _______, CAPS_WORKAROUND, _______
+                                       _______, _______, _______,            _______, KC_CAPS, _______
   ),
   [_NAV] = LAYOUT_split_3x5_3(
              _______, RCS(KC_TAB),         _______,C(KC_TAB), _______,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_TAB,

@@ -67,4 +67,4 @@ I just wanted to save off my keymaps without merging them with the official repo
 
 -   General troubles: try `qmk doctor` to detect issues and `qmk clean`
 -   Linker issues: this could be due to having something in `rules.mk`; I once hit this when I had `COMBO_ENABLE = yes` in there, and removing it fixed everything.
--   If `KC_CAPS` is being sent as ctrl, then it's some random new bug that I encountered and didn't find an existing issue for. The workaround is to make `KC_CAPS` into a dual-function key. This only happens for me when the left half of the Corne is plugged in via USB.
+-   If `KC_CAPS` is being sent as ctrl, then it's [this issue](https://github.com/qmk/qmk_firmware/issues/15505). The solution is to flash the EEPROM.
