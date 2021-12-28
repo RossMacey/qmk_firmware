@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include QMK_KEYBOARD_H
 #include "version.h"
+#include "swapper.h"
 #include <stdio.h>
 
 enum layers {
@@ -34,6 +35,10 @@ enum custom_keycodes {
     MAC_CTRL_WIN_GUI = SAFE_RANGE,
     // GUI on Mac, ctrl on Win
     MAC_GUI_WIN_CTRL,
+    // Cmd+tab on Mac, alt+tab on Win
+    SW_APP,
+    // Cmd+` (just for Mac since Windows doesn't have something like this)
+    SW_WIN,
     // (, {, and [ based on which modifier is held
     KC_LEFT_ENCLOSE,
     // ), }, and ] based on which modifier is held
@@ -120,7 +125,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                       _______, _______, _______,            _______, KC_CAPS, _______
   ),
   [_NAV] = LAYOUT_split_3x5_3(
-    _______, RCS(KC_TAB), _______,C(KC_TAB), _______,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_TAB,
+    _______, RCS(KC_TAB),  SW_WIN,C(KC_TAB),  SW_APP,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_TAB,
     KC_LGUI,     KC_LALT, KC_LCTL,  KC_LSFT, _______,            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, KC_SPC,
     _______,     _______, _______,  _______, _______,            KC_ESC,  KC_BSPC, KC_ENT,  KC_DEL, _______,
                           _______,  _______, _______,            _______, KC_BSPC, _______
@@ -332,6 +337,11 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             set_color_split(37, RGB_DARK_YELLOW);  // 'U' key
             set_color_split(45, RGB_DARK_YELLOW);  // 'O' key
 
+            set_color_split(18, RGB_DARK_GREEN);  // 'W' key
+            set_color_split(17, RGB_DARK_WHITE);  // 'E' key
+            set_color_split(10, RGB_DARK_GREEN);  // 'R' key
+            set_color_split(9, RGB_DARK_WHITE);   // 'T' key
+
             const uint8_t keycodes[] = {44 /*I*/, 38 /*J*/, 43 /*K*/, 46 /*L*/};
             set_all_keys_colors(keycodes, sizeof(keycodes) / sizeof(uint8_t), RGB_DARK_MAGENTA);
             break;
@@ -369,12 +379,21 @@ void keyboard_post_init_user(void) {
     clear_mods();
 }
 
+bool sw_app_active = false;
+bool sw_win_active = false;
+
 // https://github.com/qmk/qmk_firmware/issues/4611#issuecomment-446713700
 // https://www.reddit.com/r/olkb/comments/oflwv6/how_do_i_change_qmk_layer_tap_behavior/h4l7u8n/?utm_source=reddit&utm_medium=web2x&context=3
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     bool isPressed   = record->event.pressed;
     bool isCtrlHeld  = is_ctrl_held();
     bool isShiftHeld = is_shift_held();
+
+    {
+        uint16_t mod = is_mac_the_default() ? KC_LGUI : KC_LALT;
+        update_swapper(&sw_app_active, mod, KC_TAB, SW_APP, keycode, record);
+    }
+    update_swapper(&sw_win_active, KC_LGUI, KC_GRV, SW_WIN, keycode, record);
 
     switch (keycode) {
         case MAC_CTRL_WIN_GUI: {
