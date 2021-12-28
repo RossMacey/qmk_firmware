@@ -21,13 +21,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 
 enum layers {
-    _WIN_BASE,  // default layer
-    _MAC_BASE,  // default layer but with Mac keys
-    _SYMB,      // symbols
-    _NUM,       // numbers
-    _FUN,       // fn keys
-    _NAV,       // navigation keys
-    _MDIA,      // media keys
+    _BASE,  // default layer
+    _SYMB,  // symbols
+    _NUM,   // numbers
+    _FUN,   // fn keys
+    _NAV,   // navigation keys
+    _MDIA,  // media keys
 };
 
 enum custom_keycodes {
@@ -43,31 +42,23 @@ enum custom_keycodes {
 
 // Left-hand home row mods on Windows: GACS (Gui → Alt → Ctrl → Shift)
 // ("W_HM" = "Windows home")
+//
+// On Mac, the magic keycode CG_TOGG will let you change this to CAGS. See
+// https://docs.qmk.fm/#/keycodes_magic?id=magic-keycodes
 #define W_HM_A LGUI_T(KC_A)
 #define W_HM_S LALT_T(KC_S)
 #define W_HM_D LCTL_T(KC_D)
 #define W_HM_F LSFT_T(KC_F)
 
 // Right-hand home row mods on Windows: SCAG
-// All of these use the left-hand modifier to make some of the custom code
-// easier to write (since there's only a need to check, unset, or set a single
-// modifier rather than both).
+//
+// All of these use the left-hand modifier to make any custom code easier to
+// write (since there's only a need to check, unset, or set a single modifier
+// rather than both).
 #define W_HM_J LSFT_T(KC_J)
 #define W_HM_K LCTL_T(KC_K)
 #define W_HM_L LALT_T(KC_L)
 #define W_HM_QUOT LGUI_T(KC_QUOT)
-
-// Left-hand home row mods on Mac: CAGS
-#define M_HM_A LCTL_T(KC_A)
-#define M_HM_S LALT_T(KC_S)
-#define M_HM_D LGUI_T(KC_D)
-#define M_HM_F LSFT_T(KC_F)
-
-// Right-hand home row mods on Mac: SGAC
-#define M_HM_J LSFT_T(KC_J)
-#define M_HM_K LGUI_T(KC_K)
-#define M_HM_L LALT_T(KC_L)
-#define M_HM_QUOT LCTL_T(KC_QUOT)
 
 // The number of per-key LEDs on each side of a 5-column Corne.
 #define NUM_LEDS_PER_SIDE 24
@@ -101,51 +92,44 @@ combo_t key_combos[] = {
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-  [_WIN_BASE] = LAYOUT_split_3x5_3(
-         KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,     KC_U,    KC_I,    KC_O,               KC_P,
-       W_HM_A,  W_HM_S,  W_HM_D,  W_HM_F,    KC_G,                         KC_H,   W_HM_J,  W_HM_K,  W_HM_L,          W_HM_QUOT,
- LCTL_T(KC_Z),    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,     KC_M, KC_COMM,  KC_DOT, LT(_MDIA, KC_SLSH),
-    LT(_FUN, KC_ESC),  LT(_NAV, KC_SPC), LT(_NUM, KC_TAB),               KC_ENT, LT(_SYMB, KC_BSPC), MO(_NAV)
-  ),
-
-  [_MAC_BASE] = LAYOUT_split_3x5_3(
-         KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,     KC_U,    KC_I,    KC_O,               KC_P,
-       M_HM_A,  M_HM_S,  M_HM_D,  M_HM_F,    KC_G,                         KC_H,   M_HM_J,  M_HM_K,  M_HM_L,          M_HM_QUOT,
- LGUI_T(KC_Z),    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,     KC_M, KC_COMM,  KC_DOT, LT(_MDIA, KC_SLSH),
+  [_BASE] = LAYOUT_split_3x5_3(
+            KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                    KC_Y,     KC_U,    KC_I,    KC_O,               KC_P,
+          W_HM_A,  W_HM_S,  W_HM_D,  W_HM_F,    KC_G,                    KC_H,   W_HM_J,  W_HM_K,  W_HM_L,          W_HM_QUOT,
+    LCTL_T(KC_Z),    KC_X,    KC_C,    KC_V,    KC_B,                    KC_N,     KC_M, KC_COMM,  KC_DOT, LT(_MDIA, KC_SLSH),
     LT(_FUN, KC_ESC),  LT(_NAV, KC_SPC), LT(_NUM, KC_TAB),               KC_ENT, LT(_SYMB, KC_BSPC), MO(_NAV)
   ),
 
   [_SYMB] = LAYOUT_split_3x5_3(
-    KC_MINS,    S(KC_MINS),         KC_EQL,       S(KC_EQL), KC_BSLS,         _______, _______,          _______, _______,         _______,
-    KC_QUOT,    S(KC_QUOT),KC_LEFT_ENCLOSE,KC_RIGHT_ENCLOSE,  KC_GRV,         _______, KC_LSFT, MAC_GUI_WIN_CTRL, KC_LALT,MAC_CTRL_WIN_GUI,
-    KC_SCLN,    S(KC_SCLN),        KC_LBRC,         KC_RBRC, _______,         _______, _______,          _______, _______,         _______,
-                                           _______, _______, _______,         _______, _______, _______
+    KC_MINS, S(KC_MINS),         KC_EQL,       S(KC_EQL), KC_BSLS,         _______, _______, _______, _______, _______,
+    KC_QUOT, S(KC_QUOT),KC_LEFT_ENCLOSE,KC_RIGHT_ENCLOSE,  KC_GRV,         _______, KC_LSFT, KC_LCTL, KC_LALT, KC_LGUI,
+    KC_SCLN, S(KC_SCLN),        KC_LBRC,         KC_RBRC, _______,         _______, _______, _______, _______, _______,
+                                        _______, _______, _______,         _______, _______, _______
   ),
 
   [_NUM] = LAYOUT_split_3x5_3(
-             _______, _______,         _______, _______, _______,            KC_NLCK,      KC_7, KC_8, KC_9, S(KC_EQL),
-    MAC_CTRL_WIN_GUI, KC_LALT,MAC_GUI_WIN_CTRL, KC_LSFT, _______,            S(KC_SCLN),   KC_4, KC_5, KC_6, KC_MINS,
-             _______, _______,         _______, _______, _______,            KC_COMM,      KC_1, KC_2, KC_3, _______,
-                                       _______, _______, _______,            KC_DOT,    _______, KC_0
+    _______, _______, _______, _______, _______,               KC_NLCK, KC_7, KC_8, KC_9, S(KC_EQL),
+    KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, _______,            S(KC_SCLN), KC_4, KC_5, KC_6,   KC_MINS,
+    _______, _______, _______, _______, _______,                KC_DOT, KC_1, KC_2, KC_3,   _______,
+                      _______, _______, _______,               KC_COMM, _______, KC_0
   ),
 
   [_FUN] = LAYOUT_split_3x5_3(
-                KC_1,    KC_2,            KC_3,    KC_4,    KC_5,            _______, KC_F7,     KC_F8, KC_F9, KC_F12,
-    MAC_CTRL_WIN_GUI, KC_LALT,MAC_GUI_WIN_CTRL, KC_LSFT, _______,            _______, KC_F4,     KC_F5, KC_F6, KC_F11,
-                KC_6,    KC_7,            KC_8,    KC_9,    KC_0,            _______, KC_F1,     KC_F2, KC_F3, KC_F10,
-                                       _______, _______, _______,            _______, KC_CAPS, _______
+       KC_1,    KC_2,    KC_3,    KC_4,    KC_5,            _______, KC_F7, KC_F8, KC_F9, KC_F12,
+    KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, _______,            _______, KC_F4, KC_F5, KC_F6, KC_F11,
+       KC_6,    KC_7,    KC_8,    KC_9,    KC_0,            _______, KC_F1, KC_F2, KC_F3, KC_F10,
+                      _______, _______, _______,            _______, KC_CAPS, _______
   ),
   [_NAV] = LAYOUT_split_3x5_3(
-             _______, RCS(KC_TAB),         _______,C(KC_TAB), _______,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_TAB,
-    MAC_CTRL_WIN_GUI,     KC_LALT,MAC_GUI_WIN_CTRL, KC_LSFT, _______,            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, KC_SPC,
-             _______,     _______,         _______, _______, _______,            KC_ESC,  KC_BSPC, KC_ENT,  KC_DEL, _______,
-                                           _______, _______, _______,            _______, KC_BSPC, _______
+    _______, RCS(KC_TAB), _______,C(KC_TAB), _______,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_TAB,
+    KC_LGUI,     KC_LALT, KC_LCTL,  KC_LSFT, _______,            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, KC_SPC,
+    _______,     _______, _______,  _______, _______,            KC_ESC,  KC_BSPC, KC_ENT,  KC_DEL, _______,
+                          _______,  _______, _______,            _______, KC_BSPC, _______
   ),
   [_MDIA] = LAYOUT_split_3x5_3(
-               RESET, _______,          RGB_TOG, DF(_MAC_BASE), DF(_WIN_BASE),     KC_WH_U, KC_MPRV, KC_MS_U, KC_MNXT, KC_PSCR,
-    MAC_CTRL_WIN_GUI, KC_LALT, MAC_GUI_WIN_CTRL,       KC_LSFT, _______,           KC_WH_D, KC_MS_L, KC_MS_D, KC_MS_R, _______,
-             _______, _______,          _______,       _______, _______,           KC_MUTE, KC_VOLD, KC_MPLY, KC_VOLU, _______,
-                                        _______,       _______, _______,           KC_BTN3, KC_BTN1, KC_BTN2
+    RESET, _______,   RGB_TOG, _______, CG_TOGG,           KC_WH_U, KC_MPRV, KC_MS_U, KC_MNXT, KC_PSCR,
+    KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, _______,           KC_WH_D, KC_MS_L, KC_MS_D, KC_MS_R, _______,
+    _______, _______, _______, _______, _______,           KC_MUTE, KC_VOLD, KC_MPLY, KC_VOLU, _______,
+                      _______, _______, _______,           KC_BTN3, KC_BTN1, KC_BTN2
   )
 };
 // clang-format on
@@ -219,7 +203,7 @@ void light_up_right_mods(uint8_t r, uint8_t g, uint8_t b) {
     set_all_keys_colors(right_mod_keycodes, sizeof(right_mod_keycodes) / sizeof(uint8_t), r, g, b);
 }
 
-bool is_mac_the_default(void) { return layer_state_cmp(default_layer_state, _MAC_BASE); }
+bool is_mac_the_default(void) { return keymap_config.swap_lctl_lgui; }
 
 bool is_shift_held(void) { return (get_mods() & MOD_BIT(KC_LSFT)) || (get_mods() & MOD_BIT(KC_RSFT)); }
 bool is_ctrl_held(void) { return get_mods() & MOD_BIT(KC_LCTL); }
@@ -251,8 +235,17 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     //   34  39  42  47  48
     //  33  40  41
 
+    // Set underglow
+    if (is_mac_the_default()) {
+        set_color_for_contiguous_keycodes(0, 5, 0x32, 0x32, 0x32);
+        set_color_for_contiguous_keycodes(27, 32, 0x32, 0x32, 0x32);
+    } else {
+        set_color_for_contiguous_keycodes(0, 5, 0x00, 0x32, 0x00);
+        set_color_for_contiguous_keycodes(27, 32, 0x00, 0x32, 0x00);
+    }
+
     switch (get_highest_layer(layer_state)) {
-        case _WIN_BASE:
+        case _BASE:
             // Common colors between Windows and Mac
             if (host_keyboard_leds() & (1 << USB_LED_CAPS_LOCK)) {
                 // When caps lock is on, make it REALLY obvious.
@@ -276,9 +269,6 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             set_color_split(6, RGB_DARK_GREEN);     // LH thumb key 3
             set_color_split(40, RGB_DARK_BLUE);     // RH thumb key 2
 
-            // MAC (this is here because default layers just work strangely I
-            // guess; when the Mac layer is default, the Windows layer is still
-            // the highest layer)
             if (is_mac_the_default()) {
                 if (is_ctrl_held()) {
                     set_color_split(22, RGB_DARK_GREEN);  // 'A' key
@@ -288,11 +278,7 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
                     set_color_split(16, RGB_DARK_GREEN);  // 'D' key
                     set_color_split(43, RGB_DARK_GREEN);  // 'K' key
                 }
-                // Set underglow
-                set_color_for_contiguous_keycodes(0, 5, 0x32, 0x32, 0x32);
-                set_color_for_contiguous_keycodes(27, 32, 0x32, 0x32, 0x32);
             } else {
-                // WINDOWS
                 if (is_gui_held()) {
                     set_color_split(22, RGB_DARK_GREEN);  // 'A' key
                     set_color_split(49, RGB_DARK_GREEN);  // ';' key
@@ -301,9 +287,6 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
                     set_color_split(16, RGB_DARK_GREEN);  // 'D' key
                     set_color_split(43, RGB_DARK_GREEN);  // 'K' key
                 }
-                // Set underglow
-                set_color_for_contiguous_keycodes(0, 5, 0x00, 0x32, 0x00);
-                set_color_for_contiguous_keycodes(27, 32, 0x00, 0x32, 0x00);
             }
 
             break;
@@ -360,9 +343,8 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             set_all_keys_colors(media_keycodes, sizeof(media_keycodes) / sizeof(uint8_t), RGB_DARK_WHITE);
             set_color_split(34, RGB_DARK_RED);  // 'B' key
 
-            set_color_split(9, RGB_DARK_GREEN);   // Win key
-            set_color_split(10, RGB_DARK_WHITE);  // Mac key
-            set_color_split(23, RGB_DARK_RED);    // RESET key
+            set_color_split(9, RGB_DARK_WHITE);  // CG_TOGG key
+            set_color_split(23, RGB_DARK_RED);   // RESET key
 
             set_color_split(50, RGB_DARK_YELLOW);  // 'P' key
 
@@ -473,11 +455,8 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         //
         // Note that it seems like an absolute value of about 185 is good.
         case W_HM_A:
-        case M_HM_A:
         case W_HM_S:
         case W_HM_L:
-            // case M_HM_L: // ← this is the same between Windows and Mac
-            // case M_HM_S: // ← this is the same between Windows and Mac
             return TAPPING_TERM + 25;
         default:
             return TAPPING_TERM;
@@ -497,11 +476,6 @@ bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
         case W_HM_F:
         case W_HM_J:
         case W_HM_K:
-        // Mac
-        // case M_HM_F: // ← this is the same between Windows and Mac
-        // case M_HM_J: // ← this is the same between Windows and Mac
-        case M_HM_D:
-        case M_HM_K:
             // Immediately select the hold action when another key is tapped.
             return true;
         default:
