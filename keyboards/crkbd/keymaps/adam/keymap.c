@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include QMK_KEYBOARD_H
 #include "version.h"
 #include "swapper.h"
+#include "transactions.h"
 #include <stdio.h>
 
 enum layers {
@@ -371,8 +372,71 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 }
 #endif
 
+// Lots of this code comes from https://github.com/qmk/qmk_firmware/tree/c4551d7ef1ed2c1069f23cc8499b7c7fc30f3ecf/users/drashna/split
+//
+// The goal is to sync keymap_config between the two halves since I base several
+// lighting decisions on its values.
+uint16_t transport_keymap_config = 0;
+void     user_keymap_sync(uint8_t initiator2target_buffer_size, const void *initiator2target_buffer, uint8_t target2initiator_buffer_size, void *target2initiator_buffer) {
+    if (initiator2target_buffer_size == sizeof(transport_keymap_config)) {
+        memcpy(&transport_keymap_config, initiator2target_buffer, initiator2target_buffer_size);
+    }
+}
+void user_transport_update(void) {
+    if (is_keyboard_master()) {
+        transport_keymap_config = keymap_config.raw;
+    } else {
+        keymap_config.raw = transport_keymap_config;
+    }
+}
+
+void user_transport_sync(void) {
+    if (is_keyboard_master()) {
+        // Keep track of the last state, so that we can tell if we need to propagate to secondary
+        static uint16_t last_keymap = 0;
+        static uint32_t last_sync;
+        bool            needs_sync = false;
+
+        // Check if the state values are different
+        if (memcmp(&transport_keymap_config, &last_keymap, sizeof(transport_keymap_config))) {
+            needs_sync = true;
+            memcpy(&last_keymap, &transport_keymap_config, sizeof(transport_keymap_config));
+        }
+
+        // Send to secondary every so often regardless of state change
+        //
+        // [Adam] Note: I toned this way down since I only really care about one
+        // magic keycode, and that keycode represents a change in operating
+        // systems (i.e. it's infrequent), and the result of a desync is just
+        // having incorrect LEDs lit up. This code is mostly just if a sync
+        // fails for whatever reason, which is actually pretty common (~10% of
+        // the time?).
+        if (timer_elapsed32(last_sync) > 1000) {
+            needs_sync = true;
+        }
+
+        // Perform the sync if requested
+        if (needs_sync) {
+            if (transaction_rpc_send(RPC_ID_USER_KEYMAP_SYNC, sizeof(transport_keymap_config), &transport_keymap_config)) {
+                last_sync = timer_read32();
+            }
+            needs_sync = false;
+        }
+    }
+}
+
+void housekeeping_task_user(void) {
+    // Update kb_state so we can send to secondary
+    user_transport_update();
+
+    // Data sync from master to secondary
+    user_transport_sync();
+}
+
 void keyboard_post_init_user(void) {
     rgblight_sethsv(HSV_MAGENTA);
+
+    transaction_register_rpc(RPC_ID_USER_KEYMAP_SYNC, user_keymap_sync);
 
     // This is good in case I screw anything up with bad code; it's REALLY hard
     // to fix it when mods get messed up since it can mess up the whole OS.

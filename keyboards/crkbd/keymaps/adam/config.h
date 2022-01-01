@@ -42,6 +42,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define USE_SERIAL_PD2
 
+// RPC to sync `keymap_config` which back magic keycodes.
+// See https://github.com/qmk/qmk_firmware/blob/c4551d7ef1ed2c1069f23cc8499b7c7fc30f3ecf/users/drashna/config.h#L32
+#define SPLIT_TRANSACTION_IDS_USER RPC_ID_USER_KEYMAP_SYNC
+
 #ifdef RGBLIGHT_ENABLE
 #    undef RGBLED_NUM
 #    define RGBLIGHT_ANIMATIONS
