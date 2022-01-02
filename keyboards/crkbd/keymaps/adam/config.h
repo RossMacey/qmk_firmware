@@ -70,7 +70,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Set default RGB mode
 #define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_SOLID_REACTIVE_SIMPLE
 // Set default hue
-// #define RGB_MATRIX_STARTUP_HUE 50
 #define RGB_MATRIX_STARTUP_HUE 200
 // Set default saturation
 #define RGB_MATRIX_STARTUP_SAT 255
