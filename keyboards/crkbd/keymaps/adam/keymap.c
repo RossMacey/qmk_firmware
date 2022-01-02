@@ -425,16 +425,40 @@ void user_transport_sync(void) {
     }
 }
 
+// Cycle the matrix color in a limited range of red/pinks/purples.
+// https://docs.qmk.fm/#/feature_rgblight?id=color-selection
+void change_matrix_color(void) {
+    static uint16_t last_update;
+    static bool     increase = true;
+
+    if (timer_elapsed(last_update) > 1500) {
+        last_update = timer_read();
+
+        // I know about rgblight_increase_hue_noeeprom, but for some reason, I
+        // can't #define a different step and I don't know why.
+        rgblight_sethsv_noeeprom(rgblight_get_hue() + (increase ? 1 : -1), rgblight_get_sat(), rgblight_get_val());
+
+        uint8_t hue = rgblight_get_hue();
+        // 11 is definitely yellow despite the color wheel, so we stop in
+        // orange.
+        if ((increase && hue >= 2 && hue < 100) || (!increase && hue > 50 && hue < 180)) {
+            increase = !increase;
+        }
+    }
+}
+
 void housekeeping_task_user(void) {
     // Update kb_state so we can send to secondary
     user_transport_update();
 
     // Data sync from master to secondary
     user_transport_sync();
+
+    change_matrix_color();
 }
 
 void keyboard_post_init_user(void) {
-    rgblight_sethsv(HSV_MAGENTA);
+    rgblight_sethsv_noeeprom(HSV_MAGENTA);
 
     transaction_register_rpc(RPC_ID_USER_KEYMAP_SYNC, user_keymap_sync);
 
