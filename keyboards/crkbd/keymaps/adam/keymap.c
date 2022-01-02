@@ -106,17 +106,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [_SYMB] = LAYOUT_split_3x5_3(
-    KC_MINS, S(KC_MINS),         KC_EQL,       S(KC_EQL), KC_BSLS,         _______, _______, _______, _______, _______,
-    KC_QUOT, S(KC_QUOT),KC_LEFT_ENCLOSE,KC_RIGHT_ENCLOSE,  KC_GRV,         _______, KC_LSFT, KC_LCTL, KC_LALT, KC_LGUI,
-    KC_SCLN, S(KC_SCLN),        KC_LBRC,         KC_RBRC, _______,         _______, _______, _______, _______, _______,
+    KC_MINS, S(KC_MINS),         KC_EQL,       S(KC_EQL), KC_BSLS,         _______, _______,    _______,   _______,    _______,
+    KC_QUOT, S(KC_QUOT),KC_LEFT_ENCLOSE,KC_RIGHT_ENCLOSE,  KC_GRV,         _______, KC_LSFT,    KC_LCTL,   KC_LALT,    KC_LGUI,
+    KC_SCLN, S(KC_SCLN),        KC_LBRC,         KC_RBRC, _______,         _______, S(KC_1), S(KC_COMM), S(KC_DOT), S(KC_SLSH),
                                         _______, _______, _______,         _______, _______, _______
   ),
 
   [_NUM] = LAYOUT_split_3x5_3(
-    _______, _______, _______, _______, _______,               KC_NLCK, KC_7, KC_8, KC_9, S(KC_EQL),
-    KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, _______,            S(KC_SCLN), KC_4, KC_5, KC_6,   KC_MINS,
-    _______, _______, _______, _______, _______,                KC_DOT, KC_1, KC_2, KC_3,   _______,
-                      _______, _______, _______,               KC_COMM, _______, KC_0
+    _______, KC_LEFT,  KC_DOT, KC_RGHT, _______,               KC_NLCK, KC_7, KC_8, KC_9, S(KC_EQL),
+    KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, _______,            S(KC_SCLN), KC_4, KC_5, KC_6,   KC_DOT,
+    _______, _______, _______, _______, _______,               KC_MINS, KC_1, KC_2, KC_3,   _______,
+                      _______, _______, _______,                KC_COMM, _______, KC_0
   ),
 
   [_FUN] = LAYOUT_split_3x5_3(
@@ -126,9 +126,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                       _______, _______, _______,            _______, KC_CAPS, _______
   ),
   [_NAV] = LAYOUT_split_3x5_3(
-    _______, RCS(KC_TAB),  SW_WIN,C(KC_TAB),  SW_APP,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_TAB,
-    KC_LGUI,     KC_LALT, KC_LCTL,  KC_LSFT, _______,            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, KC_SPC,
-    _______,     _______, _______,  _______, _______,            KC_ESC,  KC_BSPC, KC_ENT,  KC_DEL, _______,
+    _______, RCS(KC_TAB),  SW_WIN,C(KC_TAB),  SW_APP,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  _______,
+    KC_LGUI,     KC_LALT, KC_LCTL,  KC_LSFT, _______,            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT,  KC_SPC,
+    _______,     _______, _______,  _______, _______,            KC_ESC,  KC_BSPC, KC_ENT,  KC_TAB,   KC_DEL,
                           _______,  _______, _______,            _______, KC_BSPC, _______
   ),
   [_MDIA] = LAYOUT_split_3x5_3(
@@ -255,7 +255,9 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             // Common colors between Windows and Mac
             if (host_keyboard_leds() & (1 << USB_LED_CAPS_LOCK)) {
                 // When caps lock is on, make it REALLY obvious.
-                set_color_for_contiguous_keycodes(0, 50, RGB_DARK_MAGENTA);
+                HSV hsv = {rgblight_get_hue(), rgblight_get_sat(), rgblight_get_val()};
+                RGB rgb = hsv_to_rgb(hsv);
+                set_color_for_contiguous_keycodes(0, 50, rgb.r, rgb.g, rgb.b);
             }
 
             // Make it easy to tell when each home-row mod is held for long
@@ -308,7 +310,11 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
                 set_color_split(36, RGB_DARK_YELLOW);  // 'Y' key
             }
 
-            set_color_split(33, RGB_DARK_BLUE);  // Period key
+            set_color_split(18, RGB_DARK_MAGENTA);  // 'W' key
+            set_color_split(17, RGB_DARK_BLUE);     // 'E' key
+            set_color_split(10, RGB_DARK_MAGENTA);  // 'R' key
+
+            set_color_split(49, RGB_DARK_BLUE);  // Period key
 
             const uint8_t numpad_keycodes[] = {41, 37, 44, 45, 38, 43, 46, 39, 42, 47};
             set_all_keys_colors(numpad_keycodes, sizeof(numpad_keycodes) / sizeof(uint8_t), RGB_DARK_GREEN);
@@ -328,11 +334,11 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         case _NAV: {
             light_up_left_mods(RGB_DARK_MAGENTA);
             set_color_split(34, RGB_DARK_WHITE);   // 'N' key
-            set_color_split(50, RGB_DARK_WHITE);   // 'P' key
             set_color_split(49, RGB_DARK_WHITE);   // ';' key
             set_color_split(39, RGB_DARK_RED);     // 'M' key
             set_color_split(42, RGB_DARK_WHITE);   // ',' key
-            set_color_split(47, RGB_DARK_RED);     // '.' key
+            set_color_split(47, RGB_DARK_WHITE);   // '.' key
+            set_color_split(48, RGB_DARK_RED);     // '.' key
             set_color_split(36, RGB_DARK_GREEN);   // 'Y' key
             set_color_split(35, RGB_DARK_GREEN);   // 'H' key
             set_color_split(37, RGB_DARK_YELLOW);  // 'U' key
