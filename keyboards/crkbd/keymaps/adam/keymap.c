@@ -44,6 +44,9 @@ enum custom_keycodes {
     KC_LEFT_ENCLOSE,
     // ), }, and ] based on which modifier is held
     KC_RIGHT_ENCLOSE,
+
+    // Ctrl+backspace on Windows, alt+backspace on Mac
+    KC_DWRD,
 };
 
 // Left-hand home row mods on Windows: GACS (Gui → Alt → Ctrl → Shift)
@@ -85,16 +88,26 @@ enum custom_keycodes {
 #define RGB_DARK_WHITE LED_INTENSITY, LED_INTENSITY, LED_INTENSITY
 #define RGB_DARK_YELLOW LED_INTENSITY, LED_INTENSITY, 0x00
 
-enum combos { UI_HYPHEN, UIO_CAPS, COMBO_LENGTH };
+enum combos { UI_HYPHEN, UIO_CAPS, MCOMMA_BACKSPACE, COMMADOT_ENTER, MDOT_TAB, NDOT_ESC, COMBO_LENGTH };
 uint16_t COMBO_LEN = COMBO_LENGTH;
 
-const uint16_t PROGMEM ui_hyphen[] = {KC_U, KC_I, COMBO_END};
-const uint16_t PROGMEM uio_caps[]  = {KC_U, KC_I, KC_O, COMBO_END};
+const uint16_t PROGMEM ui_hyphen[]        = {KC_U, KC_I, COMBO_END};
+const uint16_t PROGMEM uio_caps[]         = {KC_U, KC_I, KC_O, COMBO_END};
+const uint16_t PROGMEM mcomma_backspace[] = {KC_M, KC_COMM, COMBO_END};
+const uint16_t PROGMEM commadot_enter[]   = {KC_COMM, KC_DOT, COMBO_END};
+const uint16_t PROGMEM mdot_tab[]         = {KC_M, KC_DOT, COMBO_END};
+const uint16_t PROGMEM ndot_esc[]         = {KC_N, KC_DOT, COMBO_END};
 
+// clang-format off
 combo_t key_combos[] = {
-    [UI_HYPHEN] = COMBO(ui_hyphen, KC_MINS),
-    [UIO_CAPS]  = COMBO(uio_caps, KC_CAPS),
+    [UI_HYPHEN]         = COMBO(ui_hyphen, KC_MINS),
+    [UIO_CAPS]          = COMBO(uio_caps, KC_CAPS),
+    [MCOMMA_BACKSPACE]  = COMBO(mcomma_backspace, KC_BSPC),
+    [COMMADOT_ENTER]    = COMBO(commadot_enter, KC_ENT),
+    [MDOT_TAB]          = COMBO(mdot_tab, KC_TAB),
+    [NDOT_ESC]          = COMBO(ndot_esc, KC_ESC),
 };
+// clang-format on
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -102,7 +115,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
             KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                    KC_Y,     KC_U,    KC_I,    KC_O,               KC_P,
           W_HM_A,  W_HM_S,  W_HM_D,  W_HM_F,    KC_G,                    KC_H,   W_HM_J,  W_HM_K,  W_HM_L,          W_HM_QUOT,
     LCTL_T(KC_Z),    KC_X,    KC_C,    KC_V,    KC_B,                    KC_N,     KC_M, KC_COMM,  KC_DOT, LT(_MDIA, KC_SLSH),
-    LT(_FUN, KC_ESC),  LT(_NAV, KC_SPC), LT(_NUM, KC_TAB),               KC_ENT, LT(_SYMB, KC_BSPC), MO(_NAV)
+    // LT(_FUN, KC_ESC),  LT(_NAV, KC_SPC), LT(_NUM, KC_TAB),               KC_ENT, LT(_SYMB, KC_BSPC), MO(_NAV)
+                  MO(_FUN),LT(_NAV, KC_SPC),MO(_NUM),                 MO(_SYMB),MO(_NAV), MO(_NAV)
   ),
 
   [_SYMB] = LAYOUT_split_3x5_3(
@@ -116,7 +130,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______, KC_LEFT,  KC_DOT, KC_RGHT, _______,               KC_NLCK, KC_7, KC_8, KC_9, S(KC_EQL),
     KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, _______,            S(KC_SCLN), KC_4, KC_5, KC_6,   KC_DOT,
     _______, _______, _______, _______, _______,               KC_MINS, KC_1, KC_2, KC_3,   _______,
-                      _______, _______, _______,                KC_COMM, _______, KC_0
+                      _______, _______, _______,                KC_COMM, KC_BSPC, KC_0
   ),
 
   [_FUN] = LAYOUT_split_3x5_3(
@@ -126,10 +140,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                       _______, _______, _______,            _______, KC_CAPS, _______
   ),
   [_NAV] = LAYOUT_split_3x5_3(
-    _______, RCS(KC_TAB),  SW_WIN,C(KC_TAB),  SW_APP,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  _______,
+    _______, RCS(KC_TAB),  SW_WIN,C(KC_TAB),  SW_APP,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_DWRD,
     KC_LGUI,     KC_LALT, KC_LCTL,  KC_LSFT, _______,            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT,  KC_SPC,
     _______,     _______, _______,  _______, _______,            KC_ESC,  KC_BSPC, KC_ENT,  KC_TAB,   KC_DEL,
-                          _______,  _______, _______,            _______, KC_BSPC, _______
+                          _______,  _______, _______,            KC_ENT,  KC_BSPC, _______
   ),
   [_MDIA] = LAYOUT_split_3x5_3(
     RESET, _______,   RGB_TOG, _______, CG_TOGG,           KC_WH_U, KC_MPRV, KC_MS_U, KC_MNXT, KC_PSCR,
@@ -272,10 +286,12 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
                 set_color_split(46, RGB_DARK_GREEN);  // 'L' key
             }
 
-            set_color_split(14, RGB_DARK_WHITE);    // LH thumb key 1
-            set_color_split(13, RGB_DARK_MAGENTA);  // LH thumb key 2
+            set_color_split(14, RGB_DARK_WHITE);  // LH thumb key 1
+            // set_color_split(13, RGB_DARK_MAGENTA);  // LH thumb key 2
             set_color_split(6, RGB_DARK_GREEN);     // LH thumb key 3
-            set_color_split(40, RGB_DARK_BLUE);     // RH thumb key 2
+            set_color_split(33, RGB_DARK_BLUE);     // RH thumb key 1
+            set_color_split(40, RGB_DARK_MAGENTA);  // RH thumb key 2
+            // set_color_split(41, RGB_DARK_WHITE);    // RH thumb key 3
 
             if (is_mac_the_default()) {
                 if (is_ctrl_held()) {
@@ -343,6 +359,7 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             set_color_split(35, RGB_DARK_GREEN);   // 'H' key
             set_color_split(37, RGB_DARK_YELLOW);  // 'U' key
             set_color_split(45, RGB_DARK_YELLOW);  // 'O' key
+            set_color_split(50, RGB_DARK_RED);     // 'P' key
 
             set_color_split(18, RGB_DARK_GREEN);  // 'W' key
             set_color_split(17, RGB_DARK_WHITE);  // 'E' key
@@ -470,6 +487,8 @@ void keyboard_post_init_user(void) {
 
     // This is good in case I screw anything up with bad code; it's REALLY hard
     // to fix it when mods get messed up since it can mess up the whole OS.
+    //
+    // Ctrl+alt+del can help on Windows, as can osk.exe sometimes.
     clear_mods();
 }
 
@@ -509,6 +528,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 unregister_mods(MOD_BIT(mod));
             }
             return false;
+        }
+        case KC_DWRD: {
+            if (isPressed) {
+                if (is_mac_the_default()) {
+                    tap_code16(A(KC_BSPC));
+                } else {
+                    tap_code16(C(KC_BSPC));
+                }
+                return false;
+            }
+            break;
         }
         case KC_LEFT_ENCLOSE:
             // No mod → (
