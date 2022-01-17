@@ -23,12 +23,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 
 enum layers {
-    _BASE,  // default layer
-    _SYMB,  // symbols
-    _NUM,   // numbers
-    _FUN,   // fn keys
-    _NAV,   // navigation keys
-    _MDIA,  // media keys
+    _BASE,   // default layer
+    _SYMB,   // symbols
+    _NUM,    // numbers
+    _FUN,    // fn keys
+    _NAV,    // navigation keys
+    _NAVLH,  // navigation keys but sort of mirrored so that arrows are on the LH
+    _MDIA,   // media keys
 };
 
 enum custom_keycodes {
@@ -40,6 +41,8 @@ enum custom_keycodes {
     SW_APP,
     // Cmd+` (just for Mac since Windows doesn't have something like this)
     SW_WIN,
+    // Cmd+w on Mac, ctrl+w on Windows
+    CLS_WIN,
     // (, {, and [ based on which modifier is held
     KC_LEFT_ENCLOSE,
     // ), }, and ] based on which modifier is held
@@ -68,6 +71,8 @@ enum custom_keycodes {
 #define W_HM_K LCTL_T(KC_K)
 #define W_HM_L LALT_T(KC_L)
 #define W_HM_QUOT LGUI_T(KC_QUOT)
+
+#define LT_NAV_SPACE LT(_NAV, KC_SPC)
 
 // The number of per-key LEDs on each side of a 5-column Corne.
 #define NUM_LEDS_PER_SIDE 24
@@ -116,7 +121,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
           W_HM_A,  W_HM_S,  W_HM_D,  W_HM_F,    KC_G,                    KC_H,   W_HM_J,  W_HM_K,  W_HM_L,          W_HM_QUOT,
     LCTL_T(KC_Z),    KC_X,    KC_C,    KC_V,    KC_B,                    KC_N,     KC_M, KC_COMM,  KC_DOT, LT(_MDIA, KC_SLSH),
     // LT(_FUN, KC_ESC),  LT(_NAV, KC_SPC), LT(_NUM, KC_TAB),               KC_ENT, LT(_SYMB, KC_BSPC), MO(_NAV)
-                  MO(_FUN),LT(_NAV, KC_SPC),MO(_NUM),                 MO(_SYMB),MO(_NAV), MO(_NAV)
+                  MO(_FUN),LT_NAV_SPACE,MO(_NUM),                 MO(_SYMB),MO(_NAV), MO(_NAV)
   ),
 
   [_SYMB] = LAYOUT_split_3x5_3(
@@ -129,8 +134,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_NUM] = LAYOUT_split_3x5_3(
     _______, KC_LEFT,  KC_DOT, KC_RGHT, _______,               KC_NLCK, KC_7, KC_8, KC_9, S(KC_EQL),
     KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, _______,            S(KC_SCLN), KC_4, KC_5, KC_6,   KC_DOT,
-    _______, _______, _______, _______, _______,               KC_MINS, KC_1, KC_2, KC_3,   _______,
-                      _______, _______, _______,                KC_COMM, KC_BSPC, KC_0
+    _______, _______, KC_COMM, _______, _______,               KC_MINS, KC_1, KC_2, KC_3,   _______,
+                      _______, _______, _______,                KC_ENT, KC_BSPC, KC_0
   ),
 
   [_FUN] = LAYOUT_split_3x5_3(
@@ -140,10 +145,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                       _______, _______, _______,            _______, KC_CAPS, _______
   ),
   [_NAV] = LAYOUT_split_3x5_3(
-    _______, RCS(KC_TAB),  SW_WIN,C(KC_TAB),  SW_APP,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_DWRD,
-    KC_LGUI,     KC_LALT, KC_LCTL,  KC_LSFT, _______,            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT,  KC_SPC,
-    _______,     _______, _______,  _______, _______,            KC_ESC,  KC_BSPC, KC_ENT,  KC_TAB,   KC_DEL,
-                          _______,  _______, _______,            KC_ENT,  KC_BSPC, _______
+     SW_WIN, RCS(KC_TAB), CLS_WIN,C(KC_TAB),    SW_APP,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_DWRD,
+    KC_LGUI,     KC_LALT, KC_LCTL,  KC_LSFT,TO(_NAVLH),            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT,  KC_SPC,
+    _______,     _______, _______,  _______,   _______,            KC_ESC,  KC_BSPC, KC_ENT,  KC_TAB,   KC_DEL,
+                          _______,  _______,   _______,            KC_ENT,  KC_BSPC, _______
+  ),
+  [_NAVLH] = LAYOUT_split_3x5_3(
+  TO(_BASE), KC_HOME,   KC_UP,   KC_END, KC_PGUP,            _______, _______, _______, _______, _______,
+     KC_SPC, KC_LEFT, KC_DOWN,  KC_RGHT, KC_PGDN,            _______, KC_LSFT, KC_LCTL, KC_LALT, KC_LGUI,
+     KC_DEL,  KC_TAB,  KC_ENT,  KC_BSPC,  KC_ESC,            _______, _______, _______, _______, _______,
+                      _______,TO(_BASE), _______,             KC_ENT, KC_BSPC, _______
   ),
   [_MDIA] = LAYOUT_split_3x5_3(
     RESET, _______,   RGB_TOG, _______, CG_TOGG,           KC_WH_U, KC_MPRV, KC_MS_U, KC_MNXT, KC_PSCR,
@@ -329,6 +340,7 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             set_color_split(18, RGB_DARK_MAGENTA);  // 'W' key
             set_color_split(17, RGB_DARK_BLUE);     // 'E' key
             set_color_split(10, RGB_DARK_MAGENTA);  // 'R' key
+            set_color_split(15, RGB_DARK_BLUE);     // 'C' key
 
             set_color_split(49, RGB_DARK_BLUE);  // Period key
 
@@ -350,23 +362,44 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         case _NAV: {
             light_up_left_mods(RGB_DARK_MAGENTA);
             set_color_split(34, RGB_DARK_WHITE);   // 'N' key
-            set_color_split(49, RGB_DARK_WHITE);   // ';' key
             set_color_split(39, RGB_DARK_RED);     // 'M' key
             set_color_split(42, RGB_DARK_WHITE);   // ',' key
             set_color_split(47, RGB_DARK_WHITE);   // '.' key
-            set_color_split(48, RGB_DARK_RED);     // '.' key
-            set_color_split(36, RGB_DARK_GREEN);   // 'Y' key
+            set_color_split(48, RGB_DARK_RED);     // '/' key
             set_color_split(35, RGB_DARK_GREEN);   // 'H' key
+            set_color_split(49, RGB_DARK_WHITE);   // ';' key
+            set_color_split(36, RGB_DARK_GREEN);   // 'Y' key
             set_color_split(37, RGB_DARK_YELLOW);  // 'U' key
             set_color_split(45, RGB_DARK_YELLOW);  // 'O' key
             set_color_split(50, RGB_DARK_RED);     // 'P' key
 
+            set_color_split(23, RGB_DARK_WHITE);  // 'Q' key
             set_color_split(18, RGB_DARK_GREEN);  // 'W' key
-            set_color_split(17, RGB_DARK_WHITE);  // 'E' key
+            set_color_split(17, RGB_DARK_RED);    // 'E' key
             set_color_split(10, RGB_DARK_GREEN);  // 'R' key
             set_color_split(9, RGB_DARK_WHITE);   // 'T' key
+            set_color_split(8, RGB_DARK_WHITE);   // 'G' key
 
             const uint8_t keycodes[] = {44 /*I*/, 38 /*J*/, 43 /*K*/, 46 /*L*/};
+            set_all_keys_colors(keycodes, sizeof(keycodes) / sizeof(uint8_t), RGB_DARK_MAGENTA);
+            break;
+        }
+        case _NAVLH: {
+            light_up_right_mods(RGB_DARK_MAGENTA);
+
+            set_color_split(7, RGB_DARK_WHITE);    // 'B' key
+            set_color_split(12, RGB_DARK_RED);     // 'V' key
+            set_color_split(15, RGB_DARK_WHITE);   // 'C' key
+            set_color_split(20, RGB_DARK_WHITE);   // 'X' key
+            set_color_split(21, RGB_DARK_RED);     // 'Z' key
+            set_color_split(8, RGB_DARK_GREEN);    // 'G' key
+            set_color_split(22, RGB_DARK_WHITE);   // 'A' key
+            set_color_split(9, RGB_DARK_GREEN);    // 'T' key
+            set_color_split(10, RGB_DARK_YELLOW);  // 'R' key
+            set_color_split(18, RGB_DARK_YELLOW);  // 'W' key
+            set_color_split(23, RGB_DARK_RED);     // 'Q' key
+
+            const uint8_t keycodes[] = {17 /*E*/, 19 /*S*/, 16 /*D*/, 11 /*F*/};
             set_all_keys_colors(keycodes, sizeof(keycodes) / sizeof(uint8_t), RGB_DARK_MAGENTA);
             break;
         }
@@ -540,11 +573,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         }
+        case CLS_WIN: {
+            if (isPressed) {
+                if (is_mac_the_default()) {
+                    tap_code16(G(KC_W));
+                } else {
+                    tap_code16(C(KC_W));
+                }
+                return false;
+            }
+            break;
+        }
         case KC_LEFT_ENCLOSE:
             // No mod → (
             // Ctrl → [
             // Shift → {
-            if (isPressed && (IS_LAYER_ON(_NAV) || IS_LAYER_ON(_SYMB))) {
+            if (isPressed && IS_LAYER_ON(_SYMB)) {
                 if (isCtrlHeld && !isShiftHeld) {
                     unregister_mods(MOD_BIT(KC_LCTL));
                     tap_code_delay(KC_LBRC, 0);
@@ -561,7 +605,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             // No mod → )
             // Ctrl → ]
             // Shift → }
-            if (isPressed && (IS_LAYER_ON(_NAV) || IS_LAYER_ON(_SYMB))) {
+            if (isPressed && IS_LAYER_ON(_SYMB)) {
                 if (isCtrlHeld && !isShiftHeld) {
                     unregister_mods(MOD_BIT(KC_LCTL));
                     tap_code_delay(KC_RBRC, 0);
@@ -601,6 +645,11 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case W_HM_S:
         case W_HM_L:
             return TAPPING_TERM + 25;
+        // I was making a bunch of typos presumably due to this shortcut, so I'm
+        // trying a much longer TAPPING_TERM so that I hopefully only hit this
+        // intentionally.
+        case LT_NAV_SPACE:
+            return TAPPING_TERM + 125;
         default:
             return TAPPING_TERM;
     }
