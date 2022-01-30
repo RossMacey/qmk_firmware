@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "version.h"
 #include "swapper.h"
 #include "transactions.h"
+#include "oneshot.h"
 #include <stdio.h>
 
 enum layers {
@@ -50,29 +51,24 @@ enum custom_keycodes {
 
     // Ctrl+backspace on Windows, alt+backspace on Mac
     KC_DWRD,
+
+    // One-shot (Callum) mods
+    OS_SHFT,
+    OS_CTRL,
+    OS_ALT,
+    OS_GUI,
 };
 
-// Left-hand home row mods on Windows: GACS (Gui → Alt → Ctrl → Shift)
-// ("W_HM" = "Windows home")
-//
-// On Mac, the magic keycode CG_TOGG will let you change this to CAGS. See
-// https://docs.qmk.fm/#/keycodes_magic?id=magic-keycodes
-#define W_HM_A LGUI_T(KC_A)
-#define W_HM_S LALT_T(KC_S)
-#define W_HM_D LCTL_T(KC_D)
-#define W_HM_F LSFT_T(KC_F)
-
-// Right-hand home row mods on Windows: SCAG
-//
-// All of these use the left-hand modifier to make any custom code easier to
-// write (since there's only a need to check, unset, or set a single modifier
-// rather than both).
-#define W_HM_J LSFT_T(KC_J)
-#define W_HM_K LCTL_T(KC_K)
-#define W_HM_L LALT_T(KC_L)
-#define W_HM_QUOT LGUI_T(KC_QUOT)
-
+// Note: neither of these dual-function keys is affected by one-shot modifiers,
+// so ctrl+space or shift+apostrophe won't work. This means I'll need to rely on
+// other layers if I need modifiers for those keys (space is on _NAV and
+// apostrophe is on _SYMB).
 #define LT_NAV_SPACE LT(_NAV, KC_SPC)
+#define LT_MDIA_QUOT LT(_MDIA, KC_QUOT)
+#define MO_NAV MO(_NAV)
+#define MO_FUN MO(_FUN)
+#define MO_NUM MO(_NUM)
+#define MO_SYMB MO(_SYMB)
 
 // The number of per-key LEDs on each side of a 5-column Corne.
 #define NUM_LEDS_PER_SIDE 24
@@ -117,48 +113,47 @@ combo_t key_combos[] = {
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_BASE] = LAYOUT_split_3x5_3(
-            KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                    KC_Y,     KC_U,    KC_I,    KC_O,               KC_P,
-          W_HM_A,  W_HM_S,  W_HM_D,  W_HM_F,    KC_G,                    KC_H,   W_HM_J,  W_HM_K,  W_HM_L,          W_HM_QUOT,
-    LCTL_T(KC_Z),    KC_X,    KC_C,    KC_V,    KC_B,                    KC_N,     KC_M, KC_COMM,  KC_DOT, LT(_MDIA, KC_SLSH),
-    // LT(_FUN, KC_ESC),  LT(_NAV, KC_SPC), LT(_NUM, KC_TAB),               KC_ENT, LT(_SYMB, KC_BSPC), MO(_NAV)
-                  MO(_FUN),LT_NAV_SPACE,MO(_NUM),                 MO(_SYMB),MO(_NAV), MO(_NAV)
+            KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                    KC_Y,     KC_U,    KC_I,    KC_O,             KC_P,
+            KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                    KC_H,     KC_J,    KC_K,    KC_L,     LT_MDIA_QUOT,
+    LCTL_T(KC_Z),    KC_X,    KC_C,    KC_V,    KC_B,                    KC_N,     KC_M, KC_COMM,  KC_DOT,  LCTL_T(KC_SLSH),
+                          MO_FUN,LT_NAV_SPACE,MO_NUM,                    MO_SYMB,MO_NAV, KC_LSFT
   ),
 
   [_SYMB] = LAYOUT_split_3x5_3(
     KC_MINS, S(KC_MINS),         KC_EQL,       S(KC_EQL), KC_BSLS,         _______, _______,    _______,   _______,    _______,
-    KC_QUOT, S(KC_QUOT),KC_LEFT_ENCLOSE,KC_RIGHT_ENCLOSE,  KC_GRV,         _______, KC_LSFT,    KC_LCTL,   KC_LALT,    KC_LGUI,
+    KC_QUOT, S(KC_QUOT),KC_LEFT_ENCLOSE,KC_RIGHT_ENCLOSE,  KC_GRV,         _______, OS_SHFT,    OS_CTRL,   OS_ALT ,    OS_GUI ,
     KC_SCLN, S(KC_SCLN),        KC_LBRC,         KC_RBRC, _______,         _______, S(KC_1), S(KC_COMM), S(KC_DOT), S(KC_SLSH),
                                         _______, _______, _______,         _______, _______, _______
   ),
 
   [_NUM] = LAYOUT_split_3x5_3(
     _______, KC_LEFT,  KC_DOT, KC_RGHT, _______,               KC_NLCK, KC_7, KC_8, KC_9, S(KC_EQL),
-    KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, _______,            S(KC_SCLN), KC_4, KC_5, KC_6,   KC_DOT,
+    OS_GUI , OS_ALT , OS_CTRL, OS_SHFT, _______,            S(KC_SCLN), KC_4, KC_5, KC_6,   KC_DOT,
     _______, _______, KC_COMM, _______, _______,               KC_MINS, KC_1, KC_2, KC_3,   _______,
                       _______, _______, _______,                KC_ENT, KC_BSPC, KC_0
   ),
 
   [_FUN] = LAYOUT_split_3x5_3(
        KC_1,    KC_2,    KC_3,    KC_4,    KC_5,            _______, KC_F7, KC_F8, KC_F9, KC_F12,
-    KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, _______,            _______, KC_F4, KC_F5, KC_F6, KC_F11,
+     OS_GUI,  OS_ALT, OS_CTRL, OS_SHFT, _______,            _______, KC_F4, KC_F5, KC_F6, KC_F11,
        KC_6,    KC_7,    KC_8,    KC_9,    KC_0,            _______, KC_F1, KC_F2, KC_F3, KC_F10,
                       _______, _______, _______,            _______, KC_CAPS, _______
   ),
   [_NAV] = LAYOUT_split_3x5_3(
      SW_WIN, RCS(KC_TAB), CLS_WIN,C(KC_TAB),    SW_APP,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_DWRD,
-    KC_LGUI,     KC_LALT, KC_LCTL,  KC_LSFT,TO(_NAVLH),            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT,  KC_SPC,
+     OS_GUI,      OS_ALT, OS_CTRL,  OS_SHFT,TO(_NAVLH),            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT,  KC_SPC,
     _______,     _______, _______,  _______,   _______,            KC_ESC,  KC_BSPC, KC_ENT,  KC_TAB,   KC_DEL,
                           _______,  _______,   _______,            KC_ENT,  KC_BSPC, _______
   ),
   [_NAVLH] = LAYOUT_split_3x5_3(
   TO(_BASE), KC_HOME,   KC_UP,   KC_END, KC_PGUP,            _______, _______, _______, _______, _______,
-     KC_SPC, KC_LEFT, KC_DOWN,  KC_RGHT, KC_PGDN,            _______, KC_LSFT, KC_LCTL, KC_LALT, KC_LGUI,
+     KC_SPC, KC_LEFT, KC_DOWN,  KC_RGHT, KC_PGDN,            _______, OS_SHFT, OS_CTRL,  OS_ALT,  OS_GUI,
      KC_DEL,  KC_TAB,  KC_ENT,  KC_BSPC,  KC_ESC,            _______, _______, _______, _______, _______,
                       _______,TO(_BASE), _______,             KC_ENT, KC_BSPC, _______
   ),
   [_MDIA] = LAYOUT_split_3x5_3(
     RESET, _______,   RGB_TOG, _______, CG_TOGG,           KC_WH_U, KC_MPRV, KC_MS_U, KC_MNXT, KC_PSCR,
-    KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, _______,           KC_WH_D, KC_MS_L, KC_MS_D, KC_MS_R, _______,
+     OS_GUI,  OS_ALT, OS_CTRL, OS_SHFT, _______,           KC_WH_D, KC_MS_L, KC_MS_D, KC_MS_R, _______,
     _______, _______, _______, _______, _______,           KC_MUTE, KC_VOLD, KC_MPLY, KC_VOLU, _______,
                       _______, _______, _______,           KC_BTN3, KC_BTN1, KC_BTN2
   )
@@ -525,8 +520,45 @@ void keyboard_post_init_user(void) {
     clear_mods();
 }
 
-bool sw_app_active = false;
-bool sw_win_active = false;
+bool is_oneshot_cancel_key(uint16_t keycode) {
+    switch (keycode) {
+        case LT_NAV_SPACE:
+        case LT_MDIA_QUOT:
+        case MO_NAV:
+        case MO_FUN:
+        case MO_NUM:
+        case MO_SYMB:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool is_oneshot_ignored_key(uint16_t keycode) {
+    switch (keycode) {
+        case LT_NAV_SPACE:
+        case LT_MDIA_QUOT:
+        case MO_NAV:
+        case MO_FUN:
+        case MO_NUM:
+        case MO_SYMB:
+        case KC_LSFT:
+        case OS_SHFT:
+        case OS_CTRL:
+        case OS_ALT:
+        case OS_GUI:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool          sw_app_active = false;
+bool          sw_win_active = false;
+oneshot_state os_shft_state = os_up_unqueued;
+oneshot_state os_ctrl_state = os_up_unqueued;
+oneshot_state os_alt_state  = os_up_unqueued;
+oneshot_state os_gui_state  = os_up_unqueued;
 
 // https://github.com/qmk/qmk_firmware/issues/4611#issuecomment-446713700
 // https://www.reddit.com/r/olkb/comments/oflwv6/how_do_i_change_qmk_layer_tap_behavior/h4l7u8n/?utm_source=reddit&utm_medium=web2x&context=3
@@ -540,6 +572,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         update_swapper(&sw_app_active, mod, KC_TAB, SW_APP, keycode, record);
     }
     update_swapper(&sw_win_active, KC_LGUI, KC_GRV, SW_WIN, keycode, record);
+
+    update_oneshot(&os_shft_state, KC_LSFT, OS_SHFT, keycode, record);
+    update_oneshot(&os_ctrl_state, is_mac_the_default() ? KC_LGUI : KC_LCTL, OS_CTRL, keycode, record);
+    update_oneshot(&os_alt_state, KC_LALT, OS_ALT, keycode, record);
+    update_oneshot(&os_gui_state, is_mac_the_default() ? KC_LCTL : KC_LGUI, OS_GUI, keycode, record);
 
     switch (keycode) {
         case MAC_CTRL_WIN_GUI: {
@@ -628,23 +665,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // longer before they're treated as their "hold" action.
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        // The shift keys are much more common and typically more deliberate as
-        // a result.
-        case W_HM_F:
-        case W_HM_J:
-            return TAPPING_TERM - 30;
-        // "A" and "S" are the source of a lot of rolls, so activating their
-        // hold functions too soon can be a cause of frustration.
-        //
-        // I just tend to hold "L" for longer, and since it's bound to alt and
-        // all of my numbers are also on my right hand, I may as well increase
-        // it.
-        //
-        // Note that it seems like an absolute value of about 185 is good.
-        case W_HM_A:
-        case W_HM_S:
-        case W_HM_L:
-            return TAPPING_TERM + 25;
         // I was making a bunch of typos presumably due to this shortcut, so I'm
         // trying a much longer TAPPING_TERM so that I hopefully only hit this
         // intentionally.
@@ -652,27 +672,6 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
             return TAPPING_TERM + 125;
         default:
             return TAPPING_TERM;
-    }
-}
-#endif
-
-#ifdef PERMISSIVE_HOLD_PER_KEY
-bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
-        // Make DF JK be permissive-hold keys. I don't want pinkies to be
-        // permissive hold due to rolling those more frequently. I learned the
-        // same thing happens with my ring fingers too (especially with the word
-        // "said").
-        // Windows
-        case W_HM_D:
-        case W_HM_F:
-        case W_HM_J:
-        case W_HM_K:
-            // Immediately select the hold action when another key is tapped.
-            return true;
-        default:
-            // Do not select the hold action when another key is tapped.
-            return false;
     }
 }
 #endif

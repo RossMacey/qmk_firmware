@@ -11,3 +11,4 @@ SPLIT_KEYBOARD = yes
 EXTRAFLAGS += -flto
 
 SRC += swapper.c
+SRC += oneshot.c
