@@ -59,10 +59,6 @@ enum custom_keycodes {
     OS_GUI,
 };
 
-// Note: neither of these dual-function keys is affected by one-shot modifiers,
-// so ctrl+space or shift+apostrophe won't work. This means I'll need to rely on
-// other layers if I need modifiers for those keys (space is on _NAV and
-// apostrophe is on _SYMB).
 #define LT_NAV_SPACE LT(_NAV, KC_SPC)
 #define LT_MDIA_QUOT LT(_MDIA, KC_QUOT)
 #define MO_NAV MO(_NAV)
@@ -522,8 +518,6 @@ void keyboard_post_init_user(void) {
 
 bool is_oneshot_cancel_key(uint16_t keycode) {
     switch (keycode) {
-        case LT_NAV_SPACE:
-        case LT_MDIA_QUOT:
         case MO_NAV:
         case MO_FUN:
         case MO_NUM:
@@ -536,8 +530,6 @@ bool is_oneshot_cancel_key(uint16_t keycode) {
 
 bool is_oneshot_ignored_key(uint16_t keycode) {
     switch (keycode) {
-        case LT_NAV_SPACE:
-        case LT_MDIA_QUOT:
         case MO_NAV:
         case MO_FUN:
         case MO_NUM:
@@ -573,10 +565,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
     update_swapper(&sw_win_active, KC_LGUI, KC_GRV, SW_WIN, keycode, record);
 
-    update_oneshot(&os_shft_state, KC_LSFT, OS_SHFT, keycode, record);
-    update_oneshot(&os_ctrl_state, is_mac_the_default() ? KC_LGUI : KC_LCTL, OS_CTRL, keycode, record);
-    update_oneshot(&os_alt_state, KC_LALT, OS_ALT, keycode, record);
-    update_oneshot(&os_gui_state, is_mac_the_default() ? KC_LCTL : KC_LGUI, OS_GUI, keycode, record);
+    bool sent_keycode = false;
+    update_oneshot(&os_shft_state, &sent_keycode, KC_LSFT, OS_SHFT, keycode, record);
+    update_oneshot(&os_ctrl_state, &sent_keycode, is_mac_the_default() ? KC_LGUI : KC_LCTL, OS_CTRL, keycode, record);
+    update_oneshot(&os_alt_state, &sent_keycode, KC_LALT, OS_ALT, keycode, record);
+    update_oneshot(&os_gui_state, &sent_keycode, is_mac_the_default() ? KC_LCTL : KC_LGUI, OS_GUI, keycode, record);
+    if (sent_keycode) return false;
 
     switch (keycode) {
         case MAC_CTRL_WIN_GUI: {

@@ -3,7 +3,7 @@
 
 #include QMK_KEYBOARD_H
 
-void update_oneshot(oneshot_state *state, uint16_t mod, uint16_t trigger, uint16_t keycode, keyrecord_t *record) {
+void update_oneshot(oneshot_state *state, bool *sent_keycode, uint16_t mod, uint16_t trigger, uint16_t keycode, keyrecord_t *record) {
     if (keycode == trigger) {
         if (record->event.pressed) {
             // Trigger keydown
@@ -34,14 +34,23 @@ void update_oneshot(oneshot_state *state, uint16_t mod, uint16_t trigger, uint16
                 *state = os_up_unqueued;
                 unregister_code(mod);
             }
-        } else {
             if (!is_oneshot_ignored_key(keycode)) {
-                // On non-ignored keyup, consider the oneshot used.
+                // On non-ignored keydown, consider the oneshot used. We
+                // immediately send the keycode so that it can have the current
+                // modifiers applied.
                 switch (*state) {
                     case os_down_unused:
+                        if (!*sent_keycode) {
+                            tap_code16(keycode);
+                            *sent_keycode = true;
+                        }
                         *state = os_down_used;
                         break;
                     case os_up_queued:
+                        if (!*sent_keycode) {
+                            tap_code16(keycode);
+                            *sent_keycode = true;
+                        }
                         *state = os_up_unqueued;
                         unregister_code(mod);
                         break;
