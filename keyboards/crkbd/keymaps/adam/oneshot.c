@@ -41,14 +41,14 @@ void update_oneshot(oneshot_state *state, bool *sent_keycode, uint16_t mod, uint
                 switch (*state) {
                     case os_down_unused:
                         if (!*sent_keycode) {
-                            tap_code16(keycode);
+                            register_code16(keycode);
                             *sent_keycode = true;
                         }
                         *state = os_down_used;
                         break;
                     case os_up_queued:
                         if (!*sent_keycode) {
-                            tap_code16(keycode);
+                            register_code16(keycode);
                             *sent_keycode = true;
                         }
                         *state = os_up_unqueued;
