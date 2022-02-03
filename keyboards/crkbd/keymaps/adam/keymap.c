@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "version.h"
 #include "swapper.h"
 #include "transactions.h"
+#include "customkeys.h"
 #include "oneshot.h"
 #include <stdio.h>
 
@@ -31,32 +32,6 @@ enum layers {
     _NAV,    // navigation keys
     _NAVLH,  // navigation keys but sort of mirrored so that arrows are on the LH
     _MDIA,   // media keys
-};
-
-enum custom_keycodes {
-    // Ctrl on Mac, GUI on Win
-    MAC_CTRL_WIN_GUI = SAFE_RANGE,
-    // GUI on Mac, ctrl on Win
-    MAC_GUI_WIN_CTRL,
-    // Cmd+tab on Mac, alt+tab on Win
-    SW_APP,
-    // Cmd+` (just for Mac since Windows doesn't have something like this)
-    SW_WIN,
-    // Cmd+w on Mac, ctrl+w on Windows
-    CLS_WIN,
-    // (, {, and [ based on which modifier is held
-    KC_LEFT_ENCLOSE,
-    // ), }, and ] based on which modifier is held
-    KC_RIGHT_ENCLOSE,
-
-    // Ctrl+backspace on Windows, alt+backspace on Mac
-    KC_DWRD,
-
-    // One-shot (Callum) mods
-    OS_SHFT,
-    OS_CTRL,
-    OS_ALT,
-    OS_GUI,
 };
 
 #define LT_NAV_SPACE LT(_NAV, KC_SPC)
@@ -559,13 +534,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     bool isCtrlHeld  = is_ctrl_held();
     bool isShiftHeld = is_shift_held();
 
+    bool sent_keycode = false;
+
     {
         uint16_t mod = is_mac_the_default() ? KC_LGUI : KC_LALT;
         update_swapper(&sw_app_active, mod, KC_TAB, SW_APP, keycode, record);
     }
     update_swapper(&sw_win_active, KC_LGUI, KC_GRV, SW_WIN, keycode, record);
-
-    bool sent_keycode = false;
 
     // Handle these before one-shot modifiers so that the modifiers are still
     // pressed. Also, consider pressing these to have sent a keycode for
