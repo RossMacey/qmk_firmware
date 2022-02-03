@@ -251,44 +251,12 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
                 set_color_for_contiguous_keycodes(0, 50, rgb.r, rgb.g, rgb.b);
             }
 
-            // Make it easy to tell when each home-row mod is held for long
-            // enough by lighting up the corresponding LEDs on both sides of the
-            // keyboard.
-            if (is_shift_held()) {
-                set_color_split(11, RGB_DARK_GREEN);  // 'F' key
-                set_color_split(38, RGB_DARK_GREEN);  // 'J' key
-            }
-            if (get_mods() & MOD_BIT(KC_LALT)) {
-                set_color_split(19, RGB_DARK_GREEN);  // 'S' key
-                set_color_split(46, RGB_DARK_GREEN);  // 'L' key
-            }
-
             set_color_split(14, RGB_DARK_WHITE);  // LH thumb key 1
             // set_color_split(13, RGB_DARK_MAGENTA);  // LH thumb key 2
             set_color_split(6, RGB_DARK_GREEN);     // LH thumb key 3
             set_color_split(33, RGB_DARK_BLUE);     // RH thumb key 1
             set_color_split(40, RGB_DARK_MAGENTA);  // RH thumb key 2
             // set_color_split(41, RGB_DARK_WHITE);    // RH thumb key 3
-
-            if (is_mac_the_default()) {
-                if (is_ctrl_held()) {
-                    set_color_split(22, RGB_DARK_GREEN);  // 'A' key
-                    set_color_split(49, RGB_DARK_GREEN);  // ';' key
-                }
-                if (is_gui_held()) {
-                    set_color_split(16, RGB_DARK_GREEN);  // 'D' key
-                    set_color_split(43, RGB_DARK_GREEN);  // 'K' key
-                }
-            } else {
-                if (is_gui_held()) {
-                    set_color_split(22, RGB_DARK_GREEN);  // 'A' key
-                    set_color_split(49, RGB_DARK_GREEN);  // ';' key
-                }
-                if (is_ctrl_held()) {
-                    set_color_split(16, RGB_DARK_GREEN);  // 'D' key
-                    set_color_split(43, RGB_DARK_GREEN);  // 'K' key
-                }
-            }
 
             break;
         case _SYMB: {
@@ -390,6 +358,42 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         }
         default:
             break;
+    }
+
+    // Make it easy to tell when each home-row mod is held for long enough by
+    // lighting up the corresponding LEDs on both sides of the keyboard.
+    //
+    // Keep in mind that this shows over all layers and lights up both halves of
+    // the keyboard, so it's good if you care more about your modifier status
+    // than you do the regular LED color (i.e. it's good if you know your layout
+    // well enough already).
+    if (is_shift_held()) {
+        set_color_split(11, RGB_DARK_YELLOW);  // 'F' key
+        set_color_split(38, RGB_DARK_YELLOW);  // 'J' key
+    }
+    if (get_mods() & MOD_BIT(KC_LALT)) {
+        set_color_split(19, RGB_DARK_YELLOW);  // 'S' key
+        set_color_split(46, RGB_DARK_YELLOW);  // 'L' key
+    }
+
+    if (is_mac_the_default()) {
+        if (is_ctrl_held()) {
+            set_color_split(22, RGB_DARK_YELLOW);  // 'A' key
+            set_color_split(49, RGB_DARK_YELLOW);  // ';' key
+        }
+        if (is_gui_held()) {
+            set_color_split(16, RGB_DARK_YELLOW);  // 'D' key
+            set_color_split(43, RGB_DARK_YELLOW);  // 'K' key
+        }
+    } else {
+        if (is_gui_held()) {
+            set_color_split(22, RGB_DARK_YELLOW);  // 'A' key
+            set_color_split(49, RGB_DARK_YELLOW);  // ';' key
+        }
+        if (is_ctrl_held()) {
+            set_color_split(16, RGB_DARK_YELLOW);  // 'D' key
+            set_color_split(43, RGB_DARK_YELLOW);  // 'K' key
+        }
     }
 }
 #endif
