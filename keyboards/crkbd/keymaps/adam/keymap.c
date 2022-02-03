@@ -566,6 +566,48 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     update_swapper(&sw_win_active, KC_LGUI, KC_GRV, SW_WIN, keycode, record);
 
     bool sent_keycode = false;
+
+    // Handle these before one-shot modifiers so that the modifiers are still
+    // pressed. Also, consider pressing these to have sent a keycode for
+    // one-shot modifiers since the register_code() call in oneshot.c can't
+    // understand these custom keycodes.
+    switch (keycode) {
+        case KC_LEFT_ENCLOSE:
+            // No mod → (
+            // Ctrl → [
+            // Shift → {
+            if (isPressed && IS_LAYER_ON(_SYMB)) {
+                if (isCtrlHeld && !isShiftHeld) {
+                    unregister_mods(MOD_BIT(KC_LCTL));
+                    tap_code_delay(KC_LBRC, 0);
+                    register_mods(MOD_BIT(KC_LCTL));
+                } else if (isShiftHeld) {
+                    tap_code_delay(KC_LBRC, 0);
+                } else {
+                    tap_code16(S(KC_9));
+                }
+                sent_keycode = true;
+            }
+            break;
+        case KC_RIGHT_ENCLOSE:
+            // No mod → )
+            // Ctrl → ]
+            // Shift → }
+            if (isPressed && IS_LAYER_ON(_SYMB)) {
+                if (isCtrlHeld && !isShiftHeld) {
+                    unregister_mods(MOD_BIT(KC_LCTL));
+                    tap_code_delay(KC_RBRC, 0);
+                    register_mods(MOD_BIT(KC_LCTL));
+                } else if (isShiftHeld) {
+                    tap_code_delay(KC_RBRC, 0);
+                } else {
+                    tap_code16(S(KC_0));
+                }
+                sent_keycode = true;
+            }
+            break;
+    }
+
     update_oneshot(&os_shft_state, &sent_keycode, KC_LSFT, OS_SHFT, keycode, record);
     update_oneshot(&os_ctrl_state, &sent_keycode, is_mac_the_default() ? KC_LGUI : KC_LCTL, OS_CTRL, keycode, record);
     update_oneshot(&os_alt_state, &sent_keycode, KC_LALT, OS_ALT, keycode, record);
@@ -615,40 +657,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         }
-        case KC_LEFT_ENCLOSE:
-            // No mod → (
-            // Ctrl → [
-            // Shift → {
-            if (isPressed && IS_LAYER_ON(_SYMB)) {
-                if (isCtrlHeld && !isShiftHeld) {
-                    unregister_mods(MOD_BIT(KC_LCTL));
-                    tap_code_delay(KC_LBRC, 0);
-                    register_mods(MOD_BIT(KC_LCTL));
-                } else if (isShiftHeld) {
-                    tap_code_delay(KC_LBRC, 0);
-                } else {
-                    tap_code16(S(KC_9));
-                }
-                return false;
-            }
-            break;
-        case KC_RIGHT_ENCLOSE:
-            // No mod → )
-            // Ctrl → ]
-            // Shift → }
-            if (isPressed && IS_LAYER_ON(_SYMB)) {
-                if (isCtrlHeld && !isShiftHeld) {
-                    unregister_mods(MOD_BIT(KC_LCTL));
-                    tap_code_delay(KC_RBRC, 0);
-                    register_mods(MOD_BIT(KC_LCTL));
-                } else if (isShiftHeld) {
-                    tap_code_delay(KC_RBRC, 0);
-                } else {
-                    tap_code16(S(KC_0));
-                }
-                return false;
-            }
-            break;
     }
 
     return true;
