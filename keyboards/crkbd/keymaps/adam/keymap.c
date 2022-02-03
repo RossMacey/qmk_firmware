@@ -636,26 +636,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         }
         case KC_DWRD: {
+            uint16_t code = is_mac_the_default() ? A(KC_BSPC) : C(KC_BSPC);
             if (isPressed) {
-                if (is_mac_the_default()) {
-                    tap_code16(A(KC_BSPC));
-                } else {
-                    tap_code16(C(KC_BSPC));
-                }
-                return false;
+                register_code16(code);
+            } else {
+                unregister_code16(code);
             }
-            break;
+            return false;
         }
         case CLS_WIN: {
+            uint16_t code = is_mac_the_default() ? G(KC_W) : C(KC_W);
             if (isPressed) {
-                if (is_mac_the_default()) {
-                    tap_code16(G(KC_W));
-                } else {
-                    tap_code16(C(KC_W));
-                }
-                return false;
+                register_code16(code);
+            } else {
+                unregister_code16(code);
             }
-            break;
+            return false;
         }
     }
 
