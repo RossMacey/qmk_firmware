@@ -60,11 +60,12 @@ enum layers {
 #define RGB_DARK_WHITE LED_INTENSITY, LED_INTENSITY, LED_INTENSITY
 #define RGB_DARK_YELLOW LED_INTENSITY, LED_INTENSITY, 0x00
 
-enum combos { UI_HYPHEN, UIO_CAPS, MCOMMA_BACKSPACE, COMMADOT_ENTER, MDOT_TAB, NDOT_ESC, COMBO_LENGTH };
+enum combos { UI_HYPHEN, UIO_CAPS, JKL_CAPS, MCOMMA_BACKSPACE, COMMADOT_ENTER, MDOT_TAB, NDOT_ESC, COMBO_LENGTH };
 uint16_t COMBO_LEN = COMBO_LENGTH;
 
 const uint16_t PROGMEM ui_hyphen[]        = {KC_U, KC_I, COMBO_END};
 const uint16_t PROGMEM uio_caps[]         = {KC_U, KC_I, KC_O, COMBO_END};
+const uint16_t PROGMEM jkl_caps[]         = {KC_J, KC_K, KC_L, COMBO_END};
 const uint16_t PROGMEM mcomma_backspace[] = {KC_M, KC_COMM, COMBO_END};
 const uint16_t PROGMEM commadot_enter[]   = {KC_COMM, KC_DOT, COMBO_END};
 const uint16_t PROGMEM mdot_tab[]         = {KC_M, KC_DOT, COMBO_END};
@@ -74,6 +75,7 @@ const uint16_t PROGMEM ndot_esc[]         = {KC_N, KC_DOT, COMBO_END};
 combo_t key_combos[] = {
     [UI_HYPHEN]         = COMBO(ui_hyphen, KC_MINS),
     [UIO_CAPS]          = COMBO(uio_caps, KC_CAPS),
+    [JKL_CAPS]          = COMBO(jkl_caps, KC_CAPS),
     [MCOMMA_BACKSPACE]  = COMBO(mcomma_backspace, KC_BSPC),
     [COMMADOT_ENTER]    = COMBO(commadot_enter, KC_ENT),
     [MDOT_TAB]          = COMBO(mdot_tab, KC_TAB),
@@ -87,7 +89,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
             KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                    KC_Y,     KC_U,    KC_I,    KC_O,             KC_P,
             KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                    KC_H,     KC_J,    KC_K,    KC_L,     LT_MDIA_QUOT,
     LCTL_T(KC_Z),    KC_X,    KC_C,    KC_V,    KC_B,                    KC_N,     KC_M, KC_COMM,  KC_DOT,  LCTL_T(KC_SLSH),
-                          MO_FUN,LT_NAV_SPACE,MO_NUM,                    MO_SYMB,MO_NAV, KC_LSFT
+                          MO_FUN,LT_NAV_SPACE,MO_NUM,                    MO_SYMB,MO_NAV, OS_SHFT
   ),
 
   [_SYMB] = LAYOUT_split_3x5_3(
@@ -113,7 +115,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_NAV] = LAYOUT_split_3x5_3(
      SW_WIN, RCS(KC_TAB), CLS_WIN,C(KC_TAB),    SW_APP,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_DWRD,
      OS_GUI,      OS_ALT, OS_CTRL,  OS_SHFT,TO(_NAVLH),            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT,  KC_SPC,
-    _______,     _______, _______,  _______,   _______,            KC_ESC,  KC_BSPC, KC_ENT,  KC_TAB,   KC_DEL,
+    MW_UNDO,      MW_CUT, MW_COPY,  MW_PSTE,   MW_REDO,            KC_ESC,  KC_BSPC, KC_ENT,  KC_TAB,   KC_DEL,
                           _______,  _______,   _______,            KC_ENT,  KC_BSPC, _______
   ),
   [_NAVLH] = LAYOUT_split_3x5_3(
@@ -142,6 +144,10 @@ void set_color_split(uint8_t key_code, uint8_t r, uint8_t g, uint8_t b) {
     // When using defines for MASTER_LEFT and MASTER_RIGHT, is_keyboard_left()
     // will be inaccurate. For example, (is_keyboard_left() &&
     // !is_keyboard_master()) can NEVER be true.
+    //
+    // See https://docs.qmk.fm/#/feature_split_keyboard?id=setting-handedness
+    // for other ways to set handedness. If you use something other than the
+    // #defines, then you can just set `is_left` to `is_keyboard_left()`.
 #ifdef MASTER_LEFT
     bool is_left = true;
 #endif
@@ -531,6 +537,16 @@ oneshot_state os_ctrl_state = os_up_unqueued;
 oneshot_state os_alt_state  = os_up_unqueued;
 oneshot_state os_gui_state  = os_up_unqueued;
 
+// Send cmd+code on Mac, ctrl+code on Windows.
+void send_ctrl_or_gui_and_code(uint16_t code, bool isPressed) {
+    uint16_t modified_code = is_mac_the_default() ? G(code) : C(code);
+    if (isPressed) {
+        register_code16(modified_code);
+    } else {
+        unregister_code16(modified_code);
+    }
+}
+
 // https://github.com/qmk/qmk_firmware/issues/4611#issuecomment-446713700
 // https://www.reddit.com/r/olkb/comments/oflwv6/how_do_i_change_qmk_layer_tap_behavior/h4l7u8n/?utm_source=reddit&utm_medium=web2x&context=3
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -594,41 +610,36 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (sent_keycode) return false;
 
     switch (keycode) {
-        case MAC_CTRL_WIN_GUI: {
-            // When in Mac, send ctrl. When on Windows, send GUI.
-            uint16_t mod = is_mac_the_default() ? KC_LCTL : KC_LGUI;
-            if (isPressed) {
-                register_mods(MOD_BIT(mod));
-            } else {
-                unregister_mods(MOD_BIT(mod));
-            }
+        case MW_UNDO:
+            send_ctrl_or_gui_and_code(KC_Z, isPressed);
             return false;
-        }
-        case MAC_GUI_WIN_CTRL: {
-            // When in Mac, send GUI. When on Windows, send ctrl.
-            uint16_t mod = is_mac_the_default() ? KC_LGUI : KC_LCTL;
+        case MW_CUT:
+            send_ctrl_or_gui_and_code(KC_X, isPressed);
+            return false;
+        case MW_COPY:
+            send_ctrl_or_gui_and_code(KC_C, isPressed);
+            return false;
+        case MW_PSTE:
+            send_ctrl_or_gui_and_code(KC_V, isPressed);
+            return false;
+        case CLS_WIN:
+            send_ctrl_or_gui_and_code(KC_W, isPressed);
+            return false;
+        case MW_REDO: {
+            uint16_t code = is_mac_the_default() ? G(S(KC_Z)) : C(KC_Y);
             if (isPressed) {
-                register_mods(MOD_BIT(mod));
+                register_code16(code);
             } else {
-                unregister_mods(MOD_BIT(mod));
+                unregister_code16(code);
             }
             return false;
         }
         case KC_DWRD: {
-            uint16_t code = is_mac_the_default() ? A(KC_BSPC) : C(KC_BSPC);
+            uint16_t CODE = is_mac_the_default() ? A(KC_BSPC) : C(KC_BSPC);
             if (isPressed) {
-                register_code16(code);
+                register_code16(CODE);
             } else {
-                unregister_code16(code);
-            }
-            return false;
-        }
-        case CLS_WIN: {
-            uint16_t code = is_mac_the_default() ? G(KC_W) : C(KC_W);
-            if (isPressed) {
-                register_code16(code);
-            } else {
-                unregister_code16(code);
+                unregister_code16(CODE);
             }
             return false;
         }
@@ -653,6 +664,7 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 }
 #endif
 
+// Note: by default, COMBO_TERM is 50ms (https://docs.qmk.fm/#/feature_combo?id=combo-term)
 #ifdef COMBO_TERM_PER_COMBO
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
@@ -661,6 +673,12 @@ uint16_t get_combo_term(uint16_t index, combo_t *combo) {
         // so that natural typing doesn't trigger it.
         case UI_HYPHEN:
             return 20;
+        // "UIO" transpositions *do* appear in some words, e.g. "curious". All I
+        // know is that 50 has been too low for me to consistently activate caps
+        // lock with "UIO".
+        case UIO_CAPS:
+        case JKL_CAPS:
+            return 70;
     }
 
     return COMBO_TERM;
