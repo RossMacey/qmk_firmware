@@ -101,7 +101,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_NUM] = LAYOUT_split_3x5_3(
     _______, KC_LEFT,  KC_DOT, KC_RGHT, _______,               KC_NLCK, KC_7, KC_8, KC_9, S(KC_EQL),
-    OS_GUI , OS_ALT , OS_CTRL, OS_SHFT, _______,            S(KC_SCLN), KC_4, KC_5, KC_6,   KC_DOT,
+    OS_GUI , OS_ALT , OS_CTRL, OS_SHFT, _______,             REV_COLON, KC_4, KC_5, KC_6,   KC_DOT,
     _______, _______, KC_COMM, _______, _______,               KC_MINS, KC_1, KC_2, KC_3,   _______,
                       _______, _______, _______,                KC_ENT, KC_BSPC, KC_0
   ),
@@ -567,6 +567,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // one-shot modifiers since the register_code() call in oneshot.c can't
     // understand these custom keycodes.
     switch (keycode) {
+        case REV_COLON:
+            // No mod → :
+            // Shift → ;
+            if (isPressed) {
+                if (isShiftHeld) {
+                    unregister_mods(MOD_BIT(KC_LSFT));
+                    tap_code_delay(KC_SCLN, 0);
+                    register_mods(MOD_BIT(KC_LSFT));
+                } else {
+                    tap_code16(S(KC_SCLN));
+                }
+                sent_keycode = true;
+            }
+            break;
         case KC_LEFT_ENCLOSE:
             // No mod → (
             // Ctrl → [

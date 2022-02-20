@@ -24,6 +24,11 @@ enum custom_keycodes {
     MW_PSTE,
     MW_REDO,
 
+    // Colon on its own, semicolon when shift is press. In this sense, it's
+    // reversed from the regular colon key. I did this for my number layer where
+    // I type colons much, much more frequently than semicolons.
+    REV_COLON,
+
     // One-shot (Callum) mods
     OS_SHFT,
     OS_CTRL,
