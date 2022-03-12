@@ -93,9 +93,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [_SYMB] = LAYOUT_split_3x5_3(
-    KC_MINS, S(KC_MINS),         KC_EQL,       S(KC_EQL), KC_BSLS,         _______, _______,    _______,   _______,    _______,
-    KC_QUOT, S(KC_QUOT),KC_LEFT_ENCLOSE,KC_RIGHT_ENCLOSE,  KC_GRV,         _______, OS_SHFT,    OS_CTRL,   OS_ALT ,    OS_GUI ,
-    KC_SCLN, S(KC_SCLN),        KC_LBRC,         KC_RBRC, _______,         _______, S(KC_1), S(KC_COMM), S(KC_DOT), S(KC_SLSH),
+    KC_MINS, S(KC_MINS),         KC_EQL,       S(KC_EQL), KC_BSLS,         MW_COPY, S(KC_7),    S(KC_8),   KC_BSLS,    MW_PSTE,
+    KC_QUOT, S(KC_QUOT),KC_LEFT_ENCLOSE,KC_RIGHT_ENCLOSE,  KC_GRV,       REV_COLON, OS_SHFT,    OS_CTRL,   OS_ALT ,    OS_GUI ,
+    KC_SCLN, S(KC_SCLN),        KC_LBRC,         KC_RBRC, KC_3GRV,         KC_MINS, S(KC_1), S(KC_COMM), S(KC_DOT), S(KC_SLSH),
                                         _______, _______, _______,         _______, _______, _______
   ),
 
@@ -267,7 +267,6 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             break;
         case _SYMB: {
             light_up_right_mods(RGB_DARK_BLUE);
-            set_color_for_contiguous_keycodes(8, 23, RGB_DARK_BLUE);
             break;
         }
         case _NUM: {
@@ -655,6 +654,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             } else {
                 unregister_code16(CODE);
             }
+            return false;
+        }
+        case KC_3GRV: {
+            if (isPressed) {
+                for (uint8_t i = 0; i < 3; i++) tap_code16(KC_GRV);
+            }
+
             return false;
         }
     }

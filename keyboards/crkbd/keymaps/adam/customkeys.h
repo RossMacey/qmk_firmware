@@ -14,6 +14,9 @@ enum custom_keycodes {
     // ), }, and ] based on which modifier is held
     KC_RIGHT_ENCLOSE,
 
+    // Type three backticks at once
+    KC_3GRV,
+
     // Ctrl+backspace on Windows, alt+backspace on Mac
     KC_DWRD,
 
