@@ -93,7 +93,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [_SYMB] = LAYOUT_split_3x5_3(
-    KC_MINS, S(KC_MINS),         KC_EQL,       S(KC_EQL), KC_BSLS,         MW_COPY, S(KC_7),    S(KC_8),   KC_BSLS,    MW_PSTE,
+    KC_MINS, S(KC_MINS),         KC_EQL,       S(KC_EQL), KC_BSLS,         MW_COPY, S(KC_7),    S(KC_8),   KC_DOT ,    MW_PSTE,
     KC_QUOT, S(KC_QUOT),KC_LEFT_ENCLOSE,KC_RIGHT_ENCLOSE,  KC_GRV,       REV_COLON, OS_SHFT,    OS_CTRL,   OS_ALT ,    OS_GUI ,
     KC_SCLN, S(KC_SCLN),        KC_LBRC,         KC_RBRC, KC_3GRV,         KC_MINS, S(KC_1), S(KC_COMM), S(KC_DOT), S(KC_SLSH),
                                         _______, _______, _______,         _______, _______, _______
@@ -536,13 +536,15 @@ oneshot_state os_ctrl_state = os_up_unqueued;
 oneshot_state os_alt_state  = os_up_unqueued;
 oneshot_state os_gui_state  = os_up_unqueued;
 
-// Send cmd+code on Mac, ctrl+code on Windows.
-void send_ctrl_or_gui_and_code(uint16_t code, bool isPressed) {
-    uint16_t modified_code = is_mac_the_default() ? G(code) : C(code);
-    if (isPressed) {
-        register_code16(modified_code);
+// Sends `mac_code` on macOS, `win_code` on Windows.
+//
+// Credit to Rhymu
+void send_mac_or_win(uint16_t mac_code, uint16_t win_code, bool is_pressed) {
+    uint16_t code = is_mac_the_default() ? mac_code : win_code;
+    if (is_pressed) {
+        register_code16(code);
     } else {
-        unregister_code16(modified_code);
+        unregister_code16(code);
     }
 }
 
@@ -624,19 +626,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     switch (keycode) {
         case MW_UNDO:
-            send_ctrl_or_gui_and_code(KC_Z, isPressed);
+            send_mac_or_win(G(KC_Z), C(KC_Z), isPressed);
             return false;
         case MW_CUT:
-            send_ctrl_or_gui_and_code(KC_X, isPressed);
+            send_mac_or_win(G(KC_X), C(KC_X), isPressed);
             return false;
         case MW_COPY:
-            send_ctrl_or_gui_and_code(KC_C, isPressed);
+            send_mac_or_win(G(KC_C), C(KC_C), isPressed);
             return false;
         case MW_PSTE:
-            send_ctrl_or_gui_and_code(KC_V, isPressed);
+            if (isShiftHeld) {
+                // I frequently want to send shift alongside paste to paste
+                // unformatted text (e.g. in documents or emails).
+                send_mac_or_win(G(S(KC_V)), C(S(KC_V)), isPressed);
+            } else {
+                send_mac_or_win(G(KC_V), C(KC_V), isPressed);
+            }
             return false;
         case CLS_WIN:
-            send_ctrl_or_gui_and_code(KC_W, isPressed);
+            send_mac_or_win(G(KC_W), C(KC_W), isPressed);
             return false;
         case MW_REDO: {
             uint16_t code = is_mac_the_default() ? G(S(KC_Z)) : C(KC_Y);
