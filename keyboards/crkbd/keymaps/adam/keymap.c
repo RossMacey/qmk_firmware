@@ -582,6 +582,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 sent_keycode = true;
             }
             break;
+        case MW_PSTE:
+            // No mod → paste
+            // Shift → shift+paste
+            //
+            // (I frequently want to send shift+paste to paste unformatted text,
+            // e.g. in documents or emails)
+            if (isShiftHeld) {
+                send_mac_or_win(G(S(KC_V)), C(S(KC_V)), isPressed);
+            } else {
+                send_mac_or_win(G(KC_V), C(KC_V), isPressed);
+            }
+            return false;
         case KC_LEFT_ENCLOSE:
             // No mod → (
             // Ctrl → [
@@ -633,15 +645,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case MW_COPY:
             send_mac_or_win(G(KC_C), C(KC_C), isPressed);
-            return false;
-        case MW_PSTE:
-            if (isShiftHeld) {
-                // I frequently want to send shift alongside paste to paste
-                // unformatted text (e.g. in documents or emails).
-                send_mac_or_win(G(S(KC_V)), C(S(KC_V)), isPressed);
-            } else {
-                send_mac_or_win(G(KC_V), C(KC_V), isPressed);
-            }
             return false;
         case CLS_WIN:
             send_mac_or_win(G(KC_W), C(KC_W), isPressed);
