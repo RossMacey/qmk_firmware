@@ -593,7 +593,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             } else {
                 send_mac_or_win(G(KC_V), C(KC_V), isPressed);
             }
-            return false;
+            sent_keycode = true;
+            break;
         case KC_LEFT_ENCLOSE:
             // No mod → (
             // Ctrl → [
