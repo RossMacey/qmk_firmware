@@ -18,6 +18,7 @@ I just wanted to save off my keymaps without merging them with the official repo
     -   This compiles _and_ flashes; no need to run `qmk compile` on its own.
     -   `-j 8` is the thread count.
     -   You should see it print something like "INFO Compiling keymap with make -j 8 gmmk/pro/ansi:adam:flash" as the first line.
+    -   Specify the keyboard and keymap all at once: `qmk flash -j 8 -kb moonlander -km adam`
 -   Press the RESET key on the keyboard (`fn+\` on the GMMK Pro) to enter bootloading. On the GMMK Pro _without_ QMK, the RESET sequence is to disconnect the keyboard and hold space+B before reconnecting.
 
 ## Changes to the GMMK Pro keymap
