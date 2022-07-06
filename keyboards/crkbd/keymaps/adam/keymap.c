@@ -60,25 +60,24 @@ enum layers {
 #define RGB_DARK_WHITE LED_INTENSITY, LED_INTENSITY, LED_INTENSITY
 #define RGB_DARK_YELLOW LED_INTENSITY, LED_INTENSITY, 0x00
 
-enum combos { UI_HYPHEN, UIO_CAPS, JKL_CAPS, MCOMMA_BACKSPACE, COMMADOT_ENTER, MDOT_TAB, NDOT_ESC, COMBO_LENGTH };
+enum combos { JKL_CAPS, COMMADOT_SEMICOLON, MCOMMA_HYPHEN, NDOT_ESC, JK_CTRL, DF_CTRL, COMBO_LENGTH };
 uint16_t COMBO_LEN = COMBO_LENGTH;
 
-const uint16_t PROGMEM ui_hyphen[]        = {KC_U, KC_I, COMBO_END};
-const uint16_t PROGMEM uio_caps[]         = {KC_U, KC_I, KC_O, COMBO_END};
-const uint16_t PROGMEM jkl_caps[]         = {KC_J, KC_K, KC_L, COMBO_END};
-const uint16_t PROGMEM mcomma_backspace[] = {KC_M, KC_COMM, COMBO_END};
-const uint16_t PROGMEM commadot_enter[]   = {KC_COMM, KC_DOT, COMBO_END};
-const uint16_t PROGMEM mdot_tab[]         = {KC_M, KC_DOT, COMBO_END};
-const uint16_t PROGMEM ndot_esc[]         = {KC_N, KC_DOT, COMBO_END};
+const uint16_t PROGMEM jkl_caps[]           = {KC_J, KC_K, KC_L, COMBO_END};
+const uint16_t PROGMEM commadot_semicolon[] = {KC_COMM, KC_DOT, COMBO_END};
+// Note: I hit this occasionally when I type "hmm,".
+const uint16_t PROGMEM mcomma_hyphen[] = {KC_M, KC_COMM, COMBO_END};
+const uint16_t PROGMEM jk_ctrl[]       = {KC_J, KC_K, COMBO_END};
+const uint16_t PROGMEM df_ctrl[]       = {KC_D, KC_F, COMBO_END};
+const uint16_t PROGMEM ndot_esc[]      = {KC_N, KC_DOT, COMBO_END};
 
 // clang-format off
 combo_t key_combos[] = {
-    [UI_HYPHEN]         = COMBO(ui_hyphen, KC_MINS),
-    [UIO_CAPS]          = COMBO(uio_caps, KC_CAPS),
     [JKL_CAPS]          = COMBO(jkl_caps, KC_CAPS),
-    [MCOMMA_BACKSPACE]  = COMBO(mcomma_backspace, KC_BSPC),
-    [COMMADOT_ENTER]    = COMBO(commadot_enter, KC_ENT),
-    [MDOT_TAB]          = COMBO(mdot_tab, KC_TAB),
+    [COMMADOT_SEMICOLON]= COMBO(commadot_semicolon, KC_SCLN),
+    [MCOMMA_HYPHEN]     = COMBO(mcomma_hyphen, KC_MINS),
+    [JK_CTRL]           = COMBO(jk_ctrl, OS_CTRL),
+    [DF_CTRL]           = COMBO(df_ctrl, OS_CTRL),
     [NDOT_ESC]          = COMBO(ndot_esc, KC_ESC),
 };
 // clang-format on
@@ -89,11 +88,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
             KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                    KC_Y,     KC_U,    KC_I,    KC_O,             KC_P,
             KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                    KC_H,     KC_J,    KC_K,    KC_L,     LT_MDIA_QUOT,
     LCTL_T(KC_Z),    KC_X,    KC_C,    KC_V,    KC_B,                    KC_N,     KC_M, KC_COMM,  KC_DOT,  LCTL_T(KC_SLSH),
-                          MO_FUN,LT_NAV_SPACE,MO_NUM,                    MO_SYMB,MO_NAV, OS_SHFT
+                          MO_FUN,LT_NAV_SPACE,MO_NUM,                    OS_SHFT,MO_NAV, MO_SYMB
   ),
 
   [_SYMB] = LAYOUT_split_3x5_3(
-    KC_MINS, S(KC_MINS),         KC_EQL,       S(KC_EQL), KC_BSLS,         MW_COPY, S(KC_7),    S(KC_8),   KC_DOT ,    MW_PSTE,
+    KC_MINS, S(KC_MINS),         KC_EQL,       S(KC_EQL), KC_BSLS,         MW_UNDO, S(KC_7),    S(KC_8),   KC_DOT ,    MW_PSTE,
     KC_QUOT, S(KC_QUOT),KC_LEFT_ENCLOSE,KC_RIGHT_ENCLOSE,  KC_GRV,       REV_COLON, OS_SHFT,    OS_CTRL,   OS_ALT ,    OS_GUI ,
     KC_SCLN, S(KC_SCLN),        KC_LBRC,         KC_RBRC, KC_3GRV,         KC_MINS, S(KC_1), S(KC_COMM), S(KC_DOT), S(KC_SLSH),
                                         _______, _______, _______,         _______, _______, _______
@@ -252,21 +251,40 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             // Common colors between Windows and Mac
             if (host_keyboard_leds() & (1 << USB_LED_CAPS_LOCK)) {
                 // When caps lock is on, make it REALLY obvious.
+                // Don't change the underglow though so it's obvious whether I'm
+                // in Mac or Windows mode.
                 HSV hsv = {rgblight_get_hue(), rgblight_get_sat(), rgblight_get_val()};
                 RGB rgb = hsv_to_rgb(hsv);
-                set_color_for_contiguous_keycodes(0, 50, rgb.r, rgb.g, rgb.b);
+                set_color_for_contiguous_keycodes(6, 23, rgb.r, rgb.g, rgb.b);
+                set_color_for_contiguous_keycodes(33, 50, rgb.r, rgb.g, rgb.b);
             }
 
             set_color_split(14, RGB_DARK_WHITE);  // LH thumb key 1
             // set_color_split(13, RGB_DARK_MAGENTA);  // LH thumb key 2
-            set_color_split(6, RGB_DARK_GREEN);     // LH thumb key 3
-            set_color_split(33, RGB_DARK_BLUE);     // RH thumb key 1
+            set_color_split(6, RGB_DARK_GREEN);  // LH thumb key 3
+            // set_color_split(33, RGB_DARK_BLUE);     // RH thumb key 1
             set_color_split(40, RGB_DARK_MAGENTA);  // RH thumb key 2
-            // set_color_split(41, RGB_DARK_WHITE);    // RH thumb key 3
+            set_color_split(41, RGB_DARK_BLUE);     // RH thumb key 3
 
             break;
         case _SYMB: {
             light_up_right_mods(RGB_DARK_BLUE);
+
+            set_color_split(23, RGB_DARK_BLUE);    // 'Q' key
+            set_color_split(18, RGB_DARK_CYAN);    // 'W' key
+            set_color_split(17, RGB_DARK_BLUE);    // 'E' key
+            set_color_split(10, RGB_DARK_CYAN);    // 'R' key
+            set_color_split(9, RGB_DARK_BLUE);     // 'T' key
+            set_color_split(22, RGB_DARK_BLUE);    // 'A' key
+            set_color_split(19, RGB_DARK_CYAN);    // 'S' key
+            set_color_split(16, RGB_DARK_YELLOW);  // 'D' key
+            set_color_split(11, RGB_DARK_YELLOW);  // 'F' key
+            set_color_split(8, RGB_DARK_BLUE);     // 'G' key
+            set_color_split(21, RGB_DARK_BLUE);    // 'Z' key
+            set_color_split(20, RGB_DARK_CYAN);    // 'X' key
+            set_color_split(15, RGB_DARK_YELLOW);  // 'C' key
+            set_color_split(12, RGB_DARK_YELLOW);  // 'V' key
+            set_color_split(7, RGB_DARK_CYAN);     // 'B' key
             break;
         }
         case _NUM: {
@@ -409,8 +427,8 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 // lighting decisions on its values.
 uint16_t transport_keymap_config = 0;
 void     user_keymap_sync(uint8_t initiator2target_buffer_size, const void *initiator2target_buffer, uint8_t target2initiator_buffer_size, void *target2initiator_buffer) {
-    if (initiator2target_buffer_size == sizeof(transport_keymap_config)) {
-        memcpy(&transport_keymap_config, initiator2target_buffer, initiator2target_buffer_size);
+        if (initiator2target_buffer_size == sizeof(transport_keymap_config)) {
+            memcpy(&transport_keymap_config, initiator2target_buffer, initiator2target_buffer_size);
     }
 }
 void user_transport_update(void) {
@@ -697,18 +715,11 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 #endif
 
 // Note: by default, COMBO_TERM is 50ms (https://docs.qmk.fm/#/feature_combo?id=combo-term)
+// This means you need to press both keys within 50ms to activate the combo.
+// If you accidentally trigger it too much, lower it.
 #ifdef COMBO_TERM_PER_COMBO
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
-        // "UI" is a common enough bigram in software engineering ("UI",
-        // "build", "requirements") that the combo time needs to be pretty low
-        // so that natural typing doesn't trigger it.
-        case UI_HYPHEN:
-            return 20;
-        // "UIO" transpositions *do* appear in some words, e.g. "curious". All I
-        // know is that 50 has been too low for me to consistently activate caps
-        // lock with "UIO".
-        case UIO_CAPS:
         case JKL_CAPS:
             return 70;
     }
