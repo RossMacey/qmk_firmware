@@ -60,16 +60,17 @@ enum layers {
 #define RGB_DARK_WHITE LED_INTENSITY, LED_INTENSITY, LED_INTENSITY
 #define RGB_DARK_YELLOW LED_INTENSITY, LED_INTENSITY, 0x00
 
-enum combos { JKL_CAPS, COMMADOT_SEMICOLON, MCOMMA_HYPHEN, NDOT_ESC, JK_CTRL, DF_CTRL, COMBO_LENGTH };
+enum combos { JKL_CAPS, COMMADOT_SEMICOLON, MCOMMA_HYPHEN, NDOT_ESC, JK_CTRL, DF_CTRL, PREV_NEXT_NEW_TAB, COMBO_LENGTH };
 uint16_t COMBO_LEN = COMBO_LENGTH;
 
 const uint16_t PROGMEM jkl_caps[]           = {KC_J, KC_K, KC_L, COMBO_END};
 const uint16_t PROGMEM commadot_semicolon[] = {KC_COMM, KC_DOT, COMBO_END};
 // Note: I hit this occasionally when I type "hmm,".
-const uint16_t PROGMEM mcomma_hyphen[] = {KC_M, KC_COMM, COMBO_END};
-const uint16_t PROGMEM jk_ctrl[]       = {KC_J, KC_K, COMBO_END};
-const uint16_t PROGMEM df_ctrl[]       = {KC_D, KC_F, COMBO_END};
-const uint16_t PROGMEM ndot_esc[]      = {KC_N, KC_DOT, COMBO_END};
+const uint16_t PROGMEM mcomma_hyphen[]     = {KC_M, KC_COMM, COMBO_END};
+const uint16_t PROGMEM jk_ctrl[]           = {KC_J, KC_K, COMBO_END};
+const uint16_t PROGMEM df_ctrl[]           = {KC_D, KC_F, COMBO_END};
+const uint16_t PROGMEM ndot_esc[]          = {KC_N, KC_DOT, COMBO_END};
+const uint16_t PROGMEM prev_next_new_tab[] = {PRV_TAB, NXT_TAB, COMBO_END};
 
 // clang-format off
 combo_t key_combos[] = {
@@ -79,16 +80,17 @@ combo_t key_combos[] = {
     [JK_CTRL]           = COMBO(jk_ctrl, OS_CTRL),
     [DF_CTRL]           = COMBO(df_ctrl, OS_CTRL),
     [NDOT_ESC]          = COMBO(ndot_esc, KC_ESC),
+    [PREV_NEXT_NEW_TAB] = COMBO(prev_next_new_tab, NEW_TAB),
 };
 // clang-format on
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_BASE] = LAYOUT_split_3x5_3(
-            KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                    KC_Y,     KC_U,    KC_I,    KC_O,             KC_P,
-            KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                    KC_H,     KC_J,    KC_K,    KC_L,     LT_MDIA_QUOT,
-    LCTL_T(KC_Z),    KC_X,    KC_C,    KC_V,    KC_B,                    KC_N,     KC_M, KC_COMM,  KC_DOT,  LCTL_T(KC_SLSH),
-                          MO_FUN,LT_NAV_SPACE,MO_NUM,                    OS_SHFT,MO_NAV, MO_SYMB
+    KC_Q,   KC_W,    KC_E,    KC_R,    KC_T,                    KC_Y,     KC_U,    KC_I,    KC_O,         KC_P,
+    KC_A,   KC_S,    KC_D,    KC_F,    KC_G,                    KC_H,     KC_J,    KC_K,    KC_L, LT_MDIA_QUOT,
+    KC_Z,   KC_X,    KC_C,    KC_V,    KC_B,                    KC_N,     KC_M, KC_COMM,  KC_DOT,      KC_SLSH,
+                 MO_FUN,LT_NAV_SPACE,MO_NUM,                    OS_SHFT,MO_NAV, MO_SYMB
   ),
 
   [_SYMB] = LAYOUT_split_3x5_3(
@@ -112,10 +114,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                       _______, _______, _______,            _______, KC_CAPS, _______
   ),
   [_NAV] = LAYOUT_split_3x5_3(
-     SW_WIN, RCS(KC_TAB), CLS_WIN,C(KC_TAB),    SW_APP,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_DWRD,
-     OS_GUI,      OS_ALT, OS_CTRL,  OS_SHFT,TO(_NAVLH),            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT,  KC_SPC,
-    MW_UNDO,      MW_CUT, MW_COPY,  MW_PSTE,   MW_REDO,            KC_ESC,  KC_BSPC, KC_ENT,  KC_TAB,   KC_DEL,
-                          _______,  _______,   _______,            KC_ENT,  KC_BSPC, _______
+     SW_WIN, PRV_TAB, CLS_WIN, NXT_TAB,    SW_APP,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_DWRD,
+     OS_GUI, OS_ALT,  OS_CTRL, OS_SHFT,TO(_NAVLH),            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT,  KC_SPC,
+    MW_UNDO, MW_CUT,  MW_COPY, MW_PSTE,   MW_REDO,            KC_ESC,  KC_BSPC, KC_ENT,  KC_TAB,   KC_DEL,
+                      _______, _______,   _______,            KC_ENT,  KC_BSPC, _______
   ),
   [_NAVLH] = LAYOUT_split_3x5_3(
   TO(_BASE), KC_HOME,   KC_UP,   KC_END, KC_PGUP,            _______, _______, _______, _______, _______,
@@ -566,6 +568,11 @@ void send_mac_or_win(uint16_t mac_code, uint16_t win_code, bool is_pressed) {
     }
 }
 
+void tap_mac_or_win(uint16_t mac_code, uint16_t win_code) {
+    uint16_t code = is_mac_the_default() ? mac_code : win_code;
+    tap_code16(code);
+}
+
 // https://github.com/qmk/qmk_firmware/issues/4611#issuecomment-446713700
 // https://www.reddit.com/r/olkb/comments/oflwv6/how_do_i_change_qmk_layer_tap_behavior/h4l7u8n/?utm_source=reddit&utm_medium=web2x&context=3
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -599,6 +606,34 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
                 sent_keycode = true;
             }
+            break;
+        case NEW_TAB:
+            if (isPressed) {
+                if (isShiftHeld) {
+                    unregister_mods(MOD_BIT(KC_LSFT));
+                    tap_mac_or_win(G(KC_T), C(KC_T));
+                    register_mods(MOD_BIT(KC_LSFT));
+                } else {
+                    tap_mac_or_win(G(KC_N), C(KC_N));
+                }
+                sent_keycode = true;
+            }
+            break;
+        case PRV_TAB:
+            if (isPressed) {
+                register_code16(RCS(KC_TAB));
+            } else {
+                unregister_code16(RCS(KC_TAB));
+            }
+            sent_keycode = true;
+            break;
+        case NXT_TAB:
+            if (isPressed) {
+                register_code16(C(KC_TAB));
+            } else {
+                unregister_code16(C(KC_TAB));
+            }
+            sent_keycode = true;
             break;
         case MW_PSTE:
             // No mod → paste

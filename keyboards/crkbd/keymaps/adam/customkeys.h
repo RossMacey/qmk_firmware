@@ -27,6 +27,11 @@ enum custom_keycodes {
     MW_PSTE,
     MW_REDO,
 
+    // Previous/next/new tabs in most editors/programs
+    PRV_TAB,
+    NXT_TAB,
+    NEW_TAB,
+
     // Colon on its own, semicolon when shift is press. In this sense, it's
     // reversed from the regular colon key. I did this for my number layer where
     // I type colons much, much more frequently than semicolons.
