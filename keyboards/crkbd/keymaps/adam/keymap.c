@@ -60,7 +60,7 @@ enum layers {
 #define RGB_DARK_WHITE LED_INTENSITY, LED_INTENSITY, LED_INTENSITY
 #define RGB_DARK_YELLOW LED_INTENSITY, LED_INTENSITY, 0x00
 
-enum combos { JKL_CAPS, COMMADOT_SEMICOLON, MCOMMA_HYPHEN, NDOT_ESC, JK_CTRL, DF_CTRL, PREV_NEXT_NEW_TAB, COMBO_LENGTH };
+enum combos { JKL_CAPS, COMMADOT_SEMICOLON, MCOMMA_HYPHEN, ZV_TAB, JK_CTRL, DF_CTRL, PREV_NEXT_NEW_TAB, COMBO_LENGTH };
 uint16_t COMBO_LEN = COMBO_LENGTH;
 
 const uint16_t PROGMEM jkl_caps[]           = {KC_J, KC_K, KC_L, COMBO_END};
@@ -69,7 +69,7 @@ const uint16_t PROGMEM commadot_semicolon[] = {KC_COMM, KC_DOT, COMBO_END};
 const uint16_t PROGMEM mcomma_hyphen[]     = {KC_M, KC_COMM, COMBO_END};
 const uint16_t PROGMEM jk_ctrl[]           = {KC_J, KC_K, COMBO_END};
 const uint16_t PROGMEM df_ctrl[]           = {KC_D, KC_F, COMBO_END};
-const uint16_t PROGMEM ndot_esc[]          = {KC_N, KC_DOT, COMBO_END};
+const uint16_t PROGMEM zv_tab[]            = {KC_Z, KC_V, COMBO_END};
 const uint16_t PROGMEM prev_next_new_tab[] = {PRV_TAB, NXT_TAB, COMBO_END};
 
 // clang-format off
@@ -79,7 +79,7 @@ combo_t key_combos[] = {
     [MCOMMA_HYPHEN]     = COMBO(mcomma_hyphen, KC_MINS),
     [JK_CTRL]           = COMBO(jk_ctrl, OS_CTRL),
     [DF_CTRL]           = COMBO(df_ctrl, OS_CTRL),
-    [NDOT_ESC]          = COMBO(ndot_esc, KC_ESC),
+    [ZV_TAB]            = COMBO(zv_tab, KC_TAB),
     [PREV_NEXT_NEW_TAB] = COMBO(prev_next_new_tab, NEW_TAB),
 };
 // clang-format on
@@ -101,10 +101,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [_NUM] = LAYOUT_split_3x5_3(
-    _______, KC_LEFT,  KC_DOT, KC_RGHT, _______,               KC_NLCK, KC_7, KC_8, KC_9, S(KC_EQL),
-    OS_GUI , OS_ALT , OS_CTRL, OS_SHFT, _______,             REV_COLON, KC_4, KC_5, KC_6,   KC_DOT,
-    _______, _______, KC_COMM, _______, _______,               KC_MINS, KC_1, KC_2, KC_3,   _______,
-                      _______, _______, _______,                KC_ENT, KC_BSPC, KC_0
+    _______, KC_LEFT,  KC_DOT, KC_RGHT, S(KC_MINS),               KC_NLCK, KC_7, KC_8, KC_9, S(KC_EQL),
+    OS_GUI , OS_ALT , OS_CTRL, OS_SHFT,    _______,             REV_COLON, KC_4, KC_5, KC_6,   KC_MINS,
+    _______, _______, KC_COMM, _______,    _______,               KC_MINS, KC_1, KC_2, KC_3,   _______,
+                      _______, _______,    _______,                KC_ENT, KC_BSPC, KC_0
   ),
 
   [_FUN] = LAYOUT_split_3x5_3(
@@ -429,8 +429,8 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 // lighting decisions on its values.
 uint16_t transport_keymap_config = 0;
 void     user_keymap_sync(uint8_t initiator2target_buffer_size, const void *initiator2target_buffer, uint8_t target2initiator_buffer_size, void *target2initiator_buffer) {
-        if (initiator2target_buffer_size == sizeof(transport_keymap_config)) {
-            memcpy(&transport_keymap_config, initiator2target_buffer, initiator2target_buffer_size);
+    if (initiator2target_buffer_size == sizeof(transport_keymap_config)) {
+        memcpy(&transport_keymap_config, initiator2target_buffer, initiator2target_buffer_size);
     }
 }
 void user_transport_update(void) {
