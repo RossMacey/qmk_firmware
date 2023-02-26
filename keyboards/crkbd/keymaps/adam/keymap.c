@@ -101,10 +101,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [_NUM] = LAYOUT_split_3x5_3(
-    _______, KC_LEFT,  KC_DOT, KC_RGHT, S(KC_MINS),               KC_NLCK, KC_7, KC_8, KC_9, S(KC_EQL),
-    OS_GUI , OS_ALT , OS_CTRL, OS_SHFT,    _______,             REV_COLON, KC_4, KC_5, KC_6,   KC_MINS,
-    _______, _______, KC_COMM, _______,    _______,               KC_MINS, KC_1, KC_2, KC_3,   _______,
-                      _______, _______,    _______,                KC_ENT, KC_BSPC, KC_0
+    KC_TAB,  KC_LEFT,  KC_DOT,   KC_RGHT, S(KC_MINS),               KC_NLCK, KC_7, KC_8, KC_9, S(KC_EQL),
+    OS_GUI , OS_ALT , OS_CTRL,   OS_SHFT,    _______,             REV_COLON, KC_4, KC_5, KC_6,   KC_MINS,
+    MW_UNDO, _______, KC_COMM, REV_COLON,    MW_REDO,               KC_MINS, KC_1, KC_2, KC_3,   _______,
+                      _______,   _______,    _______,                KC_ENT, KC_BSPC, KC_0
   ),
 
   [_FUN] = LAYOUT_split_3x5_3(
@@ -117,7 +117,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      SW_WIN, PRV_TAB, CLS_WIN, NXT_TAB,    SW_APP,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_DWRD,
      OS_GUI, OS_ALT,  OS_CTRL, OS_SHFT,TO(_NAVLH),            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT,  KC_SPC,
     MW_UNDO, MW_CUT,  MW_COPY, MW_PSTE,   MW_REDO,            KC_ESC,  KC_BSPC, KC_ENT,  KC_TAB,   KC_DEL,
-                      _______, _______,   _______,            KC_ENT,  KC_BSPC, _______
+                     MW_MKLNK, _______,   MW_NWTB,            KC_ENT,  KC_BSPC, _______
   ),
   [_NAVLH] = LAYOUT_split_3x5_3(
   TO(_BASE), KC_HOME,   KC_UP,   KC_END, KC_PGUP,            _______, _______, _______, _______, _______,
@@ -648,6 +648,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             sent_keycode = true;
             break;
+        case MW_NWTB:
+            // No mod → new tab (ctrl+T or cmd+T)
+            // Shift → new window (ctrl+N or cmd+N)
+            if (isShiftHeld) {
+                unregister_mods(MOD_BIT(KC_LSFT));
+                tap_mac_or_win(G(KC_N), C(KC_N));
+                register_mods(MOD_BIT(KC_LSFT));
+            } else {
+                send_mac_or_win(G(KC_T), C(KC_T), isPressed);
+            }
+            sent_keycode = true;
+            break;
         case KC_LEFT_ENCLOSE:
             // No mod → (
             // Ctrl → [
@@ -699,6 +711,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case MW_COPY:
             send_mac_or_win(G(KC_C), C(KC_C), isPressed);
+            return false;
+        case MW_MKLNK:
+            send_mac_or_win(G(KC_K), C(KC_K), isPressed);
             return false;
         case CLS_WIN:
             send_mac_or_win(G(KC_W), C(KC_W), isPressed);

@@ -26,6 +26,8 @@ enum custom_keycodes {
     MW_COPY,
     MW_PSTE,
     MW_REDO,
+    MW_NWTB,   // new tab or window (ctrl+T or ctrl+N)
+    MW_MKLNK,  // make link (ctrl+K)
 
     // Previous/next/new tabs in most editors/programs
     PRV_TAB,
