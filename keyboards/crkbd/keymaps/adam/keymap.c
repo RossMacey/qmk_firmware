@@ -101,7 +101,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [_NUM] = LAYOUT_split_3x5_3(
-    KC_TAB,  KC_LEFT,  KC_DOT,   KC_RGHT, S(KC_MINS),               KC_NLCK, KC_7, KC_8, KC_9, S(KC_EQL),
+    KC_TAB,  KC_LEFT,  KC_DOT,   KC_RGHT, S(KC_MINS),              VSC_EVAL, KC_7, KC_8, KC_9, S(KC_EQL),
     OS_GUI , OS_ALT , OS_CTRL,   OS_SHFT,    _______,             REV_COLON, KC_4, KC_5, KC_6,   KC_MINS,
     MW_UNDO, _______, KC_COMM, REV_COLON,    MW_REDO,               KC_MINS, KC_1, KC_2, KC_3,   _______,
                       _______,   _______,    _______,                KC_ENT, KC_BSPC, KC_0
@@ -576,9 +576,10 @@ void tap_mac_or_win(uint16_t mac_code, uint16_t win_code) {
 // https://github.com/qmk/qmk_firmware/issues/4611#issuecomment-446713700
 // https://www.reddit.com/r/olkb/comments/oflwv6/how_do_i_change_qmk_layer_tap_behavior/h4l7u8n/?utm_source=reddit&utm_medium=web2x&context=3
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    bool isPressed   = record->event.pressed;
-    bool isCtrlHeld  = is_ctrl_held();
-    bool isShiftHeld = is_shift_held();
+    bool isPressed = record->event.pressed;
+
+    bool isCmdOrCtrlHeld = (is_gui_held() && is_mac_the_default()) || (is_ctrl_held() && !is_mac_the_default());
+    bool isShiftHeld     = is_shift_held();
 
     bool sent_keycode = false;
 
@@ -651,25 +652,36 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case MW_NWTB:
             // No mod → new tab (ctrl+T or cmd+T)
             // Shift → new window (ctrl+N or cmd+N)
-            if (isShiftHeld) {
+            // Ctrl → go to homepage (alt+home or cmd+shift+H)
+            if (isShiftHeld && isPressed) {
                 unregister_mods(MOD_BIT(KC_LSFT));
                 tap_mac_or_win(G(KC_N), C(KC_N));
                 register_mods(MOD_BIT(KC_LSFT));
+            } else if (isCmdOrCtrlHeld && isPressed) {
+                int mod = is_mac_the_default() ? MOD_BIT(KC_LGUI) : MOD_BIT(KC_LCTL);
+                unregister_mods(mod);
+                tap_mac_or_win(G(S(KC_H)), A(KC_HOME));
+                register_mods(mod);
             } else {
                 send_mac_or_win(G(KC_T), C(KC_T), isPressed);
             }
             sent_keycode = true;
             break;
+        case CLS_WIN:
+            if (isShiftHeld && isPressed) {
+                unregister_mods(MOD_BIT(KC_LSFT));
+                tap_mac_or_win(G(KC_D), A(KC_N));
+                register_mods(MOD_BIT(KC_LSFT));
+            } else {
+                send_mac_or_win(G(KC_W), C(KC_W), isPressed);
+            }
+            sent_keycode = true;
+            break;
         case KC_LEFT_ENCLOSE:
             // No mod → (
-            // Ctrl → [
             // Shift → {
-            if (isPressed && IS_LAYER_ON(_SYMB)) {
-                if (isCtrlHeld && !isShiftHeld) {
-                    unregister_mods(MOD_BIT(KC_LCTL));
-                    tap_code_delay(KC_LBRC, 0);
-                    register_mods(MOD_BIT(KC_LCTL));
-                } else if (isShiftHeld) {
+            if (isPressed) {
+                if (isShiftHeld) {
                     tap_code_delay(KC_LBRC, 0);
                 } else {
                     tap_code16(S(KC_9));
@@ -679,14 +691,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         case KC_RIGHT_ENCLOSE:
             // No mod → )
-            // Ctrl → ]
             // Shift → }
-            if (isPressed && IS_LAYER_ON(_SYMB)) {
-                if (isCtrlHeld && !isShiftHeld) {
-                    unregister_mods(MOD_BIT(KC_LCTL));
-                    tap_code_delay(KC_RBRC, 0);
-                    register_mods(MOD_BIT(KC_LCTL));
-                } else if (isShiftHeld) {
+            if (isPressed) {
+                if (isShiftHeld) {
                     tap_code_delay(KC_RBRC, 0);
                 } else {
                     tap_code16(S(KC_0));
@@ -715,8 +722,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case MW_MKLNK:
             send_mac_or_win(G(KC_K), C(KC_K), isPressed);
             return false;
-        case CLS_WIN:
-            send_mac_or_win(G(KC_W), C(KC_W), isPressed);
+        case VSC_EVAL:
+            send_mac_or_win(G(S(KC_E)), C(S(KC_E)), isPressed);
             return false;
         case MW_REDO: {
             uint16_t code = is_mac_the_default() ? G(S(KC_Z)) : C(KC_Y);
@@ -727,6 +734,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
         }
+        // Delete the previous word
         case KC_DWRD: {
             uint16_t CODE = is_mac_the_default() ? A(KC_BSPC) : C(KC_BSPC);
             if (isPressed) {

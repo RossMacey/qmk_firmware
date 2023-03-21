@@ -9,10 +9,13 @@ enum custom_keycodes {
     SW_WIN,
     // Close window: cmd+w on Mac, ctrl+w on Windows
     CLS_WIN,
-    // (, {, and [ based on which modifier is held
+    // (, or { based on which modifier is held
     KC_LEFT_ENCLOSE,
-    // ), }, and ] based on which modifier is held
+    // ), or } based on which modifier is held
     KC_RIGHT_ENCLOSE,
+
+    // Evaluate selection in VSCode (ctrl+shift+E or cmd+shift+E)
+    VSC_EVAL,
 
     // Type three backticks at once
     KC_3GRV,
