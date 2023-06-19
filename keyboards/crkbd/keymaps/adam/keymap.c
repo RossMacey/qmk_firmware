@@ -96,12 +96,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_MINS, S(KC_MINS),         KC_EQL,       S(KC_EQL), KC_BSLS,         MW_UNDO, S(KC_7),    S(KC_8),   KC_DOT ,    MW_PSTE,
     KC_QUOT, S(KC_QUOT),KC_LEFT_ENCLOSE,KC_RIGHT_ENCLOSE,  KC_GRV,       REV_COLON, OS_SHFT,    OS_CTRL,   OS_ALT ,    OS_GUI ,
     KC_SCLN, S(KC_SCLN),        KC_LBRC,         KC_RBRC, KC_3GRV,         KC_MINS, S(KC_1), S(KC_COMM), S(KC_DOT), S(KC_SLSH),
-                                        _______, _______, _______,         _______, _______, _______
+                                        _______, _______,  KC_ENT,         _______, _______, _______
   ),
 
   [_NUM] = LAYOUT_split_3x5_3(
     KC_TAB,  KC_LEFT,  KC_DOT,   KC_RGHT, S(KC_MINS),              VSC_EVAL, KC_7, KC_8, KC_9, S(KC_EQL),
-    OS_GUI , OS_ALT , OS_CTRL,   OS_SHFT,    _______,             REV_COLON, KC_4, KC_5, KC_6,   KC_MINS,
+    OS_GUI , OS_ALT , OS_CTRL,   OS_SHFT,     KC_SPC,             REV_COLON, KC_4, KC_5, KC_6,   KC_MINS,
     MW_UNDO, _______, KC_COMM, REV_COLON,    MW_REDO,               KC_MINS, KC_1, KC_2, KC_3,   _______,
                       _______,   _______,    _______,                KC_ENT, KC_BSPC, KC_0
   ),
@@ -649,6 +649,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             sent_keycode = true;
             break;
+        case MW_MKLNK:
+            // No mod → make link (ctrl+K or cmd+K)
+            // Shift → evaluate in VSCode (ctrl+shift+E or cmd+shift+E)
+            //   Note: this is in the NAV layer because I only ever use it right
+            //         after selecting text, so this makes it natural.
+            if (isShiftHeld) {
+                send_mac_or_win(G(S(KC_E)), C(S(KC_E)), isPressed);
+            } else {
+                send_mac_or_win(G(KC_K), C(KC_K), isPressed);
+            }
+            sent_keycode = true;
+            return false;
         case MW_NWTB:
             // No mod → new tab (ctrl+T or cmd+T)
             // Shift → new window (ctrl+N or cmd+N)
@@ -718,9 +730,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case MW_COPY:
             send_mac_or_win(G(KC_C), C(KC_C), isPressed);
-            return false;
-        case MW_MKLNK:
-            send_mac_or_win(G(KC_K), C(KC_K), isPressed);
             return false;
         case VSC_EVAL:
             send_mac_or_win(G(S(KC_E)), C(S(KC_E)), isPressed);
