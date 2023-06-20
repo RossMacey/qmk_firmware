@@ -660,7 +660,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 send_mac_or_win(G(KC_K), C(KC_K), isPressed);
             }
             sent_keycode = true;
-            return false;
+            break;
         case MW_NWTB:
             // No mod → new tab (ctrl+T or cmd+T)
             // Shift → new window (ctrl+N or cmd+N)
