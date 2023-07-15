@@ -655,7 +655,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             //   Note: this is in the NAV layer because I only ever use it right
             //         after selecting text, so this makes it natural.
             if (isShiftHeld) {
-                send_mac_or_win(G(S(KC_E)), C(S(KC_E)), isPressed);
+                if (isPressed) {
+                    tap_mac_or_win(G(S(KC_E)), C(S(KC_E)));
+                }
             } else {
                 send_mac_or_win(G(KC_K), C(KC_K), isPressed);
             }
