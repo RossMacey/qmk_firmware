@@ -101,7 +101,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_NUM] = LAYOUT_split_3x5_3(
     KC_TAB,  KC_LEFT,  KC_DOT,   KC_RGHT, S(KC_MINS),              VSC_EVAL, KC_7, KC_8, KC_9, S(KC_EQL),
-    OS_GUI , OS_ALT , OS_CTRL,   OS_SHFT,     KC_SPC,             REV_COLON, KC_4, KC_5, KC_6,   KC_MINS,
+    OS_GUI , OS_ALT , OS_CTRL,   OS_SHFT,     MO_NAV,             REV_COLON, KC_4, KC_5, KC_6,   KC_MINS,
     MW_UNDO, _______, KC_COMM, REV_COLON,    MW_REDO,               KC_MINS, KC_1, KC_2, KC_3,   _______,
                       _______,   _______,    _______,                KC_ENT, KC_BSPC, KC_0
   ),
@@ -211,6 +211,7 @@ bool is_mac_the_default(void) { return keymap_config.swap_lctl_lgui; }
 bool is_shift_held(void) { return (get_mods() & MOD_BIT(KC_LSFT)) || (get_mods() & MOD_BIT(KC_RSFT)); }
 bool is_ctrl_held(void) { return get_mods() & MOD_BIT(KC_LCTL); }
 bool is_gui_held(void) { return get_mods() & MOD_BIT(KC_LGUI); }
+bool is_alt_held(void) { return get_mods() & MOD_BIT(KC_LALT); }
 
 #ifdef RGB_MATRIX_ENABLE
 // Note: all keys mentioned in this function go by QWERTY.
@@ -580,6 +581,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     bool isCmdOrCtrlHeld = (is_gui_held() && is_mac_the_default()) || (is_ctrl_held() && !is_mac_the_default());
     bool isShiftHeld     = is_shift_held();
+    bool isAltHeld       = is_alt_held();
 
     bool sent_keycode = false;
 
@@ -667,6 +669,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             // No mod → new tab (ctrl+T or cmd+T)
             // Shift → new window (ctrl+N or cmd+N)
             // Ctrl → go to homepage (alt+home or cmd+shift+H)
+            // Alt → go to address bar in Chrome (ctrl+L or cmd+L)
             if (isShiftHeld && isPressed) {
                 unregister_mods(MOD_BIT(KC_LSFT));
                 tap_mac_or_win(G(KC_N), C(KC_N));
@@ -676,6 +679,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 unregister_mods(mod);
                 tap_mac_or_win(G(S(KC_H)), A(KC_HOME));
                 register_mods(mod);
+            } else if (isAltHeld && isPressed) {
+                unregister_mods(MOD_BIT(KC_LALT));
+                tap_mac_or_win(G(KC_L), C(KC_L));
+                register_mods(MOD_BIT(KC_LALT));
             } else {
                 send_mac_or_win(G(KC_T), C(KC_T), isPressed);
             }
