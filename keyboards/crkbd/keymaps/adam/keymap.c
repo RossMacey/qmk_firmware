@@ -578,11 +578,6 @@ void tap_mac_or_win(uint16_t mac_code, uint16_t win_code) {
 // https://www.reddit.com/r/olkb/comments/oflwv6/how_do_i_change_qmk_layer_tap_behavior/h4l7u8n/?utm_source=reddit&utm_medium=web2x&context=3
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     bool isPressed = record->event.pressed;
-
-    bool isCmdOrCtrlHeld = (is_gui_held() && is_mac_the_default()) || (is_ctrl_held() && !is_mac_the_default());
-    bool isShiftHeld     = is_shift_held();
-    bool isAltHeld       = is_alt_held();
-
     bool sent_keycode = false;
 
     {
@@ -590,6 +585,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         update_swapper(&sw_app_active, mod, KC_TAB, SW_APP, keycode, record);
     }
     update_swapper(&sw_win_active, KC_LGUI, KC_GRV, SW_WIN, keycode, record);
+
+    // Capture these values AFTER the swapper stuff is done since they
+    // can change whether certain modifier are held.
+    bool isCmdOrCtrlHeld = (is_gui_held() && is_mac_the_default()) || (is_ctrl_held() && !is_mac_the_default());
+    bool isShiftHeld     = is_shift_held();
+    bool isAltHeld       = is_alt_held();
 
     // Handle these before one-shot modifiers so that the modifiers are still
     // pressed. Also, consider pressing these to have sent a keycode for
