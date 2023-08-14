@@ -30,6 +30,7 @@ enum layers {
     _NUM,    // numbers
     _FUN,    // fn keys
     _NAV,    // navigation keys
+    _NAVWIN, // navigation keys for my macOS global shortcuts between windows
     _NAVLH,  // navigation keys but sort of mirrored so that arrows are on the LH
     _MDIA,   // media keys
 };
@@ -37,6 +38,7 @@ enum layers {
 #define LT_NAV_SPACE LT(_NAV, KC_SPC)
 #define LT_MDIA_O LT(_MDIA, KC_O)
 #define MO_NAV MO(_NAV)
+#define MO_NAVWIN MO(_NAVWIN)
 #define MO_FUN MO(_FUN)
 #define MO_NUM MO(_NUM)
 #define MO_SYMB MO(_SYMB)
@@ -107,22 +109,48 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
   [_FUN] = LAYOUT_split_3x5_3(
-       KC_1,    KC_2,    KC_3,    KC_4,    KC_5,            _______, KC_F7, KC_F8, KC_F9, KC_F12,
-     OS_GUI,  OS_ALT, OS_CTRL, OS_SHFT, _______,            _______, KC_F4, KC_F5, KC_F6, KC_F11,
-       KC_6,    KC_7,    KC_8,    KC_9,    KC_0,            _______, KC_F1, KC_F2, KC_F3, KC_F10,
-                      _______, _______, _______,            _______, KC_CAPS, _______
+       KC_1,    KC_2,    KC_3,    KC_4,    KC_5,            TO(_NAVLH), KC_F7, KC_F8, KC_F9, KC_F12,
+     OS_GUI,  OS_ALT, OS_CTRL, OS_SHFT, _______,               _______, KC_F4, KC_F5, KC_F6, KC_F11,
+       KC_6,    KC_7,    KC_8,    KC_9,    KC_0,               _______, KC_F1, KC_F2, KC_F3, KC_F10,
+                      _______, _______, _______,               _______, KC_CAPS, _______
   ),
   [_NAV] = LAYOUT_split_3x5_3(
-     SW_WIN, PRV_TAB, CLS_WIN, NXT_TAB,    SW_APP,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_DWRD,
-     OS_GUI, OS_ALT,  OS_CTRL, OS_SHFT,TO(_NAVLH),            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT,  KC_SPC,
-    MW_UNDO, MW_CUT,  MW_COPY, MW_PSTE,   MW_REDO,            KC_ESC,  KC_BSPC, KC_ENT,  KC_TAB,   KC_DEL,
-                     MW_MKLNK, _______,   MW_NWTB,            KC_ENT,  KC_BSPC, _______
+     SW_WIN, PRV_TAB, CLS_WIN, NXT_TAB,     SW_APP,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_DWRD,
+     OS_GUI, OS_ALT,  OS_CTRL, OS_SHFT,  MO_NAVWIN,            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT,  KC_SPC,
+    MW_UNDO, MW_CUT,  MW_COPY, MW_PSTE,    MW_REDO,            KC_ESC,  KC_BSPC, KC_ENT,  KC_TAB,   KC_DEL,
+                     MW_MKLNK, _______,    MW_NWTB,            KC_ENT,  KC_BSPC, _______
+  ),
+  // _NAVWIN is meant to be entered momentarily from within the _NAV
+  // layer for one purpose: switching to a specific window/application.
+  // This lets me perform a scenario like this:
+  // - Be in VSCode
+  // - Enter _NAV
+  // - Select text
+  // - Copy
+  // - Momentarily enter _NAVWIN
+  // - Activate Chrome
+  // - Leave _NAVWIN (so that I'm back in _NAV)
+  // - Make a new tab
+  // - Paste
+  // - Press enter
+  //
+  // Without _NAVWIN, I would have had to enter the _NUM layer to be
+  // able to switch windows, then re-enter _NAV. I don't like bouncing
+  // between layers like that if I can avoid it.
+  //
+  // Note: alt+# only works through a separate app (I happen to use
+  // Raycast for now)
+  [_NAVWIN] = LAYOUT_split_3x5_3(
+    _______, _______, _______, _______, _______,            _______, A(KC_7), A(KC_8), A(KC_9), _______,
+     OS_GUI,  OS_ALT, OS_CTRL, OS_SHFT, _______,            _______, A(KC_4), A(KC_5), A(KC_6), _______,
+    _______, _______, _______, _______, _______,            _______, A(KC_1), A(KC_2), A(KC_3), _______,
+                      _______, _______, _______,            _______, _______, _______
   ),
   [_NAVLH] = LAYOUT_split_3x5_3(
   TO(_BASE), KC_HOME,   KC_UP,   KC_END, KC_PGUP,            _______, _______, _______, _______, _______,
      KC_SPC, KC_LEFT, KC_DOWN,  KC_RGHT, KC_PGDN,            _______, OS_SHFT, OS_CTRL,  OS_ALT,  OS_GUI,
      KC_DEL,  KC_TAB,  KC_ENT,  KC_BSPC,  KC_ESC,            _______, _______, _______, _______, _______,
-                      _______,TO(_BASE), _______,             KC_ENT, KC_BSPC, _______
+                    TO(_BASE),TO(_BASE), _______,             KC_ENT, KC_BSPC, _______
   ),
   [_MDIA] = LAYOUT_split_3x5_3(
     RESET, _______,   RGB_TOG, _______, CG_TOGG,           KC_WH_U, KC_MPRV, KC_MS_U, KC_MNXT, KC_PSCR,
@@ -524,6 +552,7 @@ void keyboard_post_init_user(void) {
 bool is_oneshot_cancel_key(uint16_t keycode) {
     switch (keycode) {
         case MO_NAV:
+        case MO_NAVWIN:
         case MO_FUN:
         case MO_NUM:
         case MO_SYMB:
@@ -536,6 +565,7 @@ bool is_oneshot_cancel_key(uint16_t keycode) {
 bool is_oneshot_ignored_key(uint16_t keycode) {
     switch (keycode) {
         case MO_NAV:
+        case MO_NAVWIN:
         case MO_FUN:
         case MO_NUM:
         case MO_SYMB:
