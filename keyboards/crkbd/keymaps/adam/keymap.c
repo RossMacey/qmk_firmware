@@ -785,6 +785,10 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         // intentionally.
         case LT_NAV_SPACE:
             return TAPPING_TERM + 125;
+        // I just hold my pinky down on O for too long for common words
+        // like "out". An extra bit of time seems to help.
+        case LT_MDIA_O:
+            return TAPPING_TERM + 50;
         default:
             return TAPPING_TERM;
     }
@@ -797,8 +801,10 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 #ifdef COMBO_TERM_PER_COMBO
 uint16_t get_combo_term(uint16_t index, combo_t *combo) {
     switch (index) {
+        // "NEI" shows up in "friend", which I seem to type often enough
+        // to accidentally trigger this. 😢
         case NEI_CTRL:
-            return 70;
+            return 30;
     }
 
     return COMBO_TERM;
