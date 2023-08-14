@@ -38,7 +38,7 @@ enum layers {
 #define LT_NAV_SPACE LT(_NAV, KC_SPC)
 #define LT_MDIA_O LT(_MDIA, KC_O)
 #define MO_NAV MO(_NAV)
-#define MO_NAVWIN MO(_NAVWIN)
+#define OSL_NAVWIN OSL(_NAVWIN)
 #define MO_FUN MO(_FUN)
 #define MO_NUM MO(_NUM)
 #define MO_SYMB MO(_SYMB)
@@ -116,7 +116,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [_NAV] = LAYOUT_split_3x5_3(
      SW_WIN, PRV_TAB, CLS_WIN, NXT_TAB,     SW_APP,            KC_PGUP, KC_HOME, KC_UP,   KC_END,  KC_DWRD,
-     OS_GUI, OS_ALT,  OS_CTRL, OS_SHFT,  MO_NAVWIN,            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT,  KC_SPC,
+     OS_GUI, OS_ALT,  OS_CTRL, OS_SHFT, OSL_NAVWIN,            KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT,  KC_SPC,
     MW_UNDO, MW_CUT,  MW_COPY, MW_PSTE,    MW_REDO,            KC_ESC,  KC_BSPC, KC_ENT,  KC_TAB,   KC_DEL,
                      MW_MKLNK, _______,    MW_NWTB,            KC_ENT,  KC_BSPC, _______
   ),
@@ -143,7 +143,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_NAVWIN] = LAYOUT_split_3x5_3(
     _______, _______, _______, _______, _______,            _______, A(KC_7), A(KC_8), A(KC_9), _______,
      OS_GUI,  OS_ALT, OS_CTRL, OS_SHFT, _______,            _______, A(KC_4), A(KC_5), A(KC_6), _______,
-    _______, _______, _______, _______, _______,            _______, A(KC_1), A(KC_2), A(KC_3), _______,
+    _______, _______, _______, A(KC_D), _______,            _______, A(KC_1), A(KC_2), A(KC_3), _______,
                       _______, _______, _______,            _______, _______, _______
   ),
   [_NAVLH] = LAYOUT_split_3x5_3(
@@ -552,7 +552,7 @@ void keyboard_post_init_user(void) {
 bool is_oneshot_cancel_key(uint16_t keycode) {
     switch (keycode) {
         case MO_NAV:
-        case MO_NAVWIN:
+        case OSL_NAVWIN:
         case MO_FUN:
         case MO_NUM:
         case MO_SYMB:
@@ -565,7 +565,7 @@ bool is_oneshot_cancel_key(uint16_t keycode) {
 bool is_oneshot_ignored_key(uint16_t keycode) {
     switch (keycode) {
         case MO_NAV:
-        case MO_NAVWIN:
+        case OSL_NAVWIN:
         case MO_FUN:
         case MO_NUM:
         case MO_SYMB:
