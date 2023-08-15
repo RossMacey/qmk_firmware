@@ -141,7 +141,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Note: alt+# only works through a separate app (I happen to use
   // Raycast for now)
   [_NAVWIN] = LAYOUT_split_3x5_3(
-    _______, _______, _______, _______, _______,            _______, A(KC_7), A(KC_8), A(KC_9), _______,
+    _______, _______, A(KC_F), _______, _______,            _______, A(KC_7), A(KC_8), A(KC_9), _______,
      OS_GUI,  OS_ALT, OS_CTRL, OS_SHFT, _______,            _______, A(KC_4), A(KC_5), A(KC_6), _______,
     _______, _______, _______, A(KC_D), _______,            _______, A(KC_1), A(KC_2), A(KC_3), _______,
                       _______, _______, _______,            _______, _______, _______
