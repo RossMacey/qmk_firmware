@@ -25,14 +25,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 
 enum layers {
-    _BASE,   // default layer
-    _SYMB,   // symbols
-    _NUM,    // numbers
-    _FUN,    // fn keys
-    _NAV,    // navigation keys
-    _NAVWIN, // navigation keys for my macOS global shortcuts between windows
-    _NAVLH,  // navigation keys but sort of mirrored so that arrows are on the LH
-    _MDIA,   // media keys
+    _BASE,    // default layer
+    _SYMB,    // symbols
+    _NUM,     // numbers
+    _FUN,     // fn keys
+    _NAV,     // navigation keys
+    _NAVWIN,  // navigation keys for my macOS global shortcuts between windows
+    _NAVLH,   // navigation keys but sort of mirrored so that arrows are on the LH
+    _MDIA,    // media keys
 };
 
 #define LT_NAV_SPACE LT(_NAV, KC_SPC)
@@ -141,9 +141,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Note: alt+# only works through a separate app (I happen to use
   // Raycast for now)
   [_NAVWIN] = LAYOUT_split_3x5_3(
-    _______, _______, A(KC_F), _______, _______,            _______, A(KC_7), A(KC_8), A(KC_9), _______,
-     OS_GUI,  OS_ALT, OS_CTRL, OS_SHFT, _______,            _______, A(KC_4), A(KC_5), A(KC_6), _______,
-    _______, _______, _______, A(KC_D), _______,            _______, A(KC_1), A(KC_2), A(KC_3), _______,
+    A(KC_Q), A(KC_W), A(KC_F), A(KC_P), A(KC_B),            A(KC_J), A(KC_7), A(KC_8), A(KC_9), A(KC_QUOT),
+     OS_GUI,  OS_ALT, OS_CTRL, OS_SHFT, _______,            A(KC_M), A(KC_4), A(KC_5), A(KC_6),    A(KC_O),
+    A(KC_Z), A(KC_X), A(KC_C), A(KC_D), A(KC_V),            A(KC_K), A(KC_1), A(KC_2), A(KC_3), A(KC_SLSH),
                       _______, _______, _______,            _______, _______, _______
   ),
   [_NAVLH] = LAYOUT_split_3x5_3(
@@ -607,7 +607,7 @@ void tap_mac_or_win(uint16_t mac_code, uint16_t win_code) {
 // https://github.com/qmk/qmk_firmware/issues/4611#issuecomment-446713700
 // https://www.reddit.com/r/olkb/comments/oflwv6/how_do_i_change_qmk_layer_tap_behavior/h4l7u8n/?utm_source=reddit&utm_medium=web2x&context=3
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    bool isPressed = record->event.pressed;
+    bool isPressed    = record->event.pressed;
     bool sent_keycode = false;
 
     {
