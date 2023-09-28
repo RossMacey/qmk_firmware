@@ -62,16 +62,16 @@ enum layers {
 #define RGB_DARK_WHITE LED_INTENSITY, LED_INTENSITY, LED_INTENSITY
 #define RGB_DARK_YELLOW LED_INTENSITY, LED_INTENSITY, 0x00
 
-enum combos { NEI_CTRL, COMMADOT_SEMICOLON, HCOMMA_HYPHEN, ZD_TAB, XD_CTRL, DH_CTRL, PREV_NEXT_NEW_TAB, COMBO_LENGTH };
+enum combos { NEI_CTRL, COMMADOT_SEMICOLON, HCOMMA_HYPHEN, ZD_TAB, XD_CTRL, DH_CTRL, PREV_NEXT_SELECT_ALL, COMBO_LENGTH };
 uint16_t COMBO_LEN = COMBO_LENGTH;
 
-const uint16_t PROGMEM nei_ctrl[]           = {KC_N, KC_E, KC_I, COMBO_END};
-const uint16_t PROGMEM commadot_semicolon[] = {KC_COMM, KC_DOT, COMBO_END};
-const uint16_t PROGMEM hcomma_hyphen[]      = {KC_H, KC_COMM, COMBO_END};
-const uint16_t PROGMEM xd_ctrl[]            = {KC_X, KC_D, COMBO_END};
-const uint16_t PROGMEM dh_ctrl[]            = {KC_D, KC_H, COMBO_END};
-const uint16_t PROGMEM zd_tab[]             = {KC_Z, KC_D, COMBO_END};
-const uint16_t PROGMEM prev_next_new_tab[]  = {PRV_TAB, NXT_TAB, COMBO_END};
+const uint16_t PROGMEM nei_ctrl[]              = {KC_N, KC_E, KC_I, COMBO_END};
+const uint16_t PROGMEM commadot_semicolon[]    = {KC_COMM, KC_DOT, COMBO_END};
+const uint16_t PROGMEM hcomma_hyphen[]         = {KC_H, KC_COMM, COMBO_END};
+const uint16_t PROGMEM xd_ctrl[]               = {KC_X, KC_D, COMBO_END};
+const uint16_t PROGMEM dh_ctrl[]               = {KC_D, KC_H, COMBO_END};
+const uint16_t PROGMEM zd_tab[]                = {KC_Z, KC_D, COMBO_END};
+const uint16_t PROGMEM prev_next_select_all[]  = {PRV_TAB, NXT_TAB, COMBO_END};
 
 // clang-format off
 combo_t key_combos[] = {
@@ -81,7 +81,7 @@ combo_t key_combos[] = {
     [XD_CTRL]           = COMBO(xd_ctrl, OS_CTRL),
     [DH_CTRL]           = COMBO(dh_ctrl, OS_CTRL),
     [ZD_TAB]            = COMBO(zd_tab, KC_TAB),
-    [PREV_NEXT_NEW_TAB] = COMBO(prev_next_new_tab, NEW_TAB),
+    [PREV_NEXT_SELECT_ALL] = COMBO(prev_next_select_all, MW_SELECT_ALL),
 };
 // clang-format on
 
@@ -641,15 +641,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 sent_keycode = true;
             }
             break;
-        case NEW_TAB:
+        case MW_SELECT_ALL:
             if (isPressed) {
-                if (isShiftHeld) {
-                    unregister_mods(MOD_BIT(KC_LSFT));
-                    tap_mac_or_win(G(KC_T), C(KC_T));
-                    register_mods(MOD_BIT(KC_LSFT));
-                } else {
-                    tap_mac_or_win(G(KC_N), C(KC_N));
-                }
+                tap_mac_or_win(G(KC_A), C(KC_A));
                 sent_keycode = true;
             }
             break;
