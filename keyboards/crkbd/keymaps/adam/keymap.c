@@ -618,9 +618,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     // Capture these values AFTER the swapper stuff is done since they
     // can change whether certain modifier are held.
-    bool isCmdOrCtrlHeld = (is_gui_held() && is_mac_the_default()) || (is_ctrl_held() && !is_mac_the_default());
-    bool isShiftHeld     = is_shift_held();
-    bool isAltHeld       = is_alt_held();
+    bool isCtrlHeld  = (is_gui_held() && is_mac_the_default()) || (is_ctrl_held() && !is_mac_the_default());
+    bool isGuiHeld   = (is_ctrl_held() && is_mac_the_default()) || (is_gui_held() && !is_mac_the_default());
+    bool isShiftHeld = is_shift_held();
+    bool isAltHeld   = is_alt_held();
 
     // Handle these before one-shot modifiers so that the modifiers are still
     // pressed. Also, consider pressing these to have sent a keycode for
@@ -695,11 +696,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             // Shift → new window (ctrl+N or cmd+N)
             // Ctrl → go to homepage (alt+home or cmd+shift+H)
             // Alt → go to address bar in Chrome (ctrl+L or cmd+L)
+            // Win → find (ctrl+F or cmd+F)
             if (isShiftHeld && isPressed) {
                 unregister_mods(MOD_BIT(KC_LSFT));
                 tap_mac_or_win(G(KC_N), C(KC_N));
                 register_mods(MOD_BIT(KC_LSFT));
-            } else if (isCmdOrCtrlHeld && isPressed) {
+            } else if (isCtrlHeld && isPressed) {
                 int mod = is_mac_the_default() ? MOD_BIT(KC_LGUI) : MOD_BIT(KC_LCTL);
                 unregister_mods(mod);
                 tap_mac_or_win(G(S(KC_H)), A(KC_HOME));
@@ -708,6 +710,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 unregister_mods(MOD_BIT(KC_LALT));
                 tap_mac_or_win(G(KC_L), C(KC_L));
                 register_mods(MOD_BIT(KC_LALT));
+            } else if (isGuiHeld && isPressed) {
+                int mod = is_mac_the_default() ? MOD_BIT(KC_LCTL) : MOD_BIT(KC_LGUI);
+                unregister_mods(mod);
+                tap_mac_or_win(G(KC_F), C(KC_F));
+                register_mods(mod);
             } else {
                 send_mac_or_win(G(KC_T), C(KC_T), isPressed);
             }
